@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Sistem Manajemen Keuangan</title>
+    <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 30px auto; padding: 0 16px; color: #222; }
+    h1 { margin-bottom: 16px; }
+    .ringkasan { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .kartu { flex: 1; min-width: 180px; padding: 14px; border: 1px solid #ddd; border-radius: 6px; background: #f9f9f9; }
+    .kartu strong { display: block; font-size: 1.2em; margin-top: 6px; }
+    .masuk { color: #1b7a3d; }
+    .keluar { color: #b91c1c; }
+    .error { background: #fee2e2; color: #991b1b; padding: 10px; border-radius: 4px; margin-bottom: 16px; }
+    form.tambah { display: grid; gap: 10px; padding: 16px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 24px; }
+    input, select, button { padding: 8px; font-size: 14px; }
+    button { background: #1d4ed8; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    button.hapus { background: #dc2626; padding: 4px 8px; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background: #f3f4f6; }
+    </style>
+</head>
+<body>
+    <h1>Sistem Manajemen Keuangan</h1>
+
+<div class="ringkasan">
+    <div class="kartu">
+        Total Pemasukan
+        <strong class="masuk">{{ total_pemasukan | rupiah }}</strong>
+    </div>
+    <div class="kartu">
+        Total Pengeluaran
+        <strong class="keluar">{{ total_pengeluaran | rupiah }}</strong>
+    </div>
+    <div class="kartu">
+        Saldo Akhir
+        <strong>{{ saldo | rupiah }}</strong>
+    </div>
+</div>
+
+    {% if pesan_error %}
+    <div class="error">{{ pesan_error }}</div>
+    {% endif %}
+
+    <form class="tambah" method="post">
+    <label for="keterangan">Keterangan (maks. 100 karakter):</label>
+    <input type="text" id="keterangan" name="keterangan" required maxlength="100" placeholder="Contoh: Gaji bulanan atau Beli makan siang">
+
+    <label for="jenis">Jenis Transaksi:</label>
+    <select id="jenis" name="jenis" required>
+        <option value="pemasukan">Pemasukan</option>
+        <option value="pengeluaran">Pengeluaran</option>
+    </select>
+
+    <label for="nominal">Nominal (Rp):</label>
+    <input type="number" id="nominal" name="nominal" min="1" required placeholder="Contoh: 50000">
+
+    <button type="submit">Simpan Transaksi</button>
+</form>
+
+  <h2>Riwayat Transaksi</h2>
+  {% if transaksi %}
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Keterangan</th>
+          <th>Jenis</th>
+          <th>Nominal</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in transaksi %}
+          <tr>
+            <td>{{ item.tanggal }}</td>
+            <td>{{ item.keterangan }}</td>
+            <td class="{{ 'masuk' if item.jenis == 'pemasukan' else 'keluar' }}">
+              {{ item.jenis | capitalize }}
+            </td>
+            <td>{{ item.nominal | rupiah }}</td>
+            <td>
+              <form method="post" action="{{ url_for('hapus_transaksi', id_transaksi=item.id) }}">
+                <button class="hapus" type="submit">Hapus</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Belum ada transaksi yang dicatat.</p>
+  {% endif %}
+</body>
+</html>

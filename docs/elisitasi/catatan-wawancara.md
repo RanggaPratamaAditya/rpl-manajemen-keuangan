@@ -52,4 +52,31 @@ Pada putaran kedua, seluruh 7 fakta tersembunyi dari Persona 2 berhasil tergali 
 ---
 
 ## Bagian 2: Wawancara Klien Nyata (Langkah 12)
-*(Akan diisi pada Langkah 12 setelah wawancara klien nyata selesai)*
+- **Tanggal / lokasi:** 21-11-2026 / Usaha Dagang UMKM di Kecamatan Baamang, Sampit *(nama usaha disamarkan)*
+- **Narasumber (peran, tanpa nama lengkap):** Pemilik Usaha (merangkap pencatat keuangan harian)
+- **Pewawancara / pencatat:** Rangga Pratama Aditya
+
+### Catatan
+| No | Pertanyaan | Jawaban ringkas | Fakta/asumsi | Konfirmasi? |
+|---|---|---|---|---|
+| 1 | Bagaimana alur pencatatan uang masuk dan uang keluar setiap hari? | Pemasukan dari penjualan harian dan pengeluaran belanja barang/operasional ditulis di satu buku kas tulis setiap sore menjelang tutup. | Fakta | Tidak |
+| 2 | Bagaimana cara menghitung saldo akhir dan membuat rekap bulanan? | Tiap akhir minggu dan akhir bulan seluruh angka di buku dijumlahkan ulang memakai kalkulator; sering memakan waktu 1–2 jam dan kadang perlu hitung ulang karena selisih. | Fakta | Ya (apakah butuh rekap mingguan selain bulanan?) |
+| 3 | Kejadian apa yang paling sering menimbulkan selisih atau kebingungan catatan? | Nota belanja kecil (seperti beli bensin, plastik, atau listrik) sering terselip atau salah ketik nominal saat disalin ke buku, sehingga saldo fisik di laci berbeda dengan buku. | Fakta | Tidak |
+| 4 | Informasi apa yang wajib dicatat di buku kas / nota yang dipakai saat ini? | Tanggal transaksi, keterangan singkat barang/keperluan, jenis (masuk/keluar), dan nominal rupiah; nota belanja biasanya hanya distaples tanpa dikelompokkan per kategori. | Fakta | Ya (daftar pasti kategori pengeluaran yang diinginkan) |
+| 5 | Siapa saja yang mencatat transaksi dan bagaimana kebiasaan memakai komputer? | Pemilik sendiri dan sesekali 1 staf kasir; keduanya terbiasa memakai HP dan peramban dasar di laptop, tetapi tidak terbiasa dengan rumus Excel yang rumit. | Fakta | Tidak |
+| 6 | Bagaimana kondisi perangkat, listrik, dan koneksi internet di lokasi usaha? | Ada 1 laptop standar di meja kasir; koneksi internet memakai tethering HP sehingga kadang tidak stabil, dan listrik sesekali padam. | Fakta | Ya (spesifikasi sistem operasi laptop klien) |
+| 7 | Informasi apa yang paling diharapkan bisa cepat dilihat kapan saja? | Ingin langsung melihat total pemasukan, total pengeluaran, dan saldo akhir hari itu tanpa hitung manual, serta bisa menyimpan salinan rekap bulanan. | Fakta | Ya (format arsip yang biasa dibuka di laptop klien: CSV/Excel?) |
+
+### Daftar Hal yang Perlu Dikonfirmasi Ulang
+1. Daftar kategori transaksi tetap yang paling sering dipakai klien (misalnya Penjualan, Bahan Baku, Operasional, Listrik/Air, Lainnya).
+2. Apakah klien membutuhkan rekap per minggu atau cukup filter per bulan.
+3. Apakah format berkas CSV sudah bisa langsung dibuka di laptop klien tanpa kendala.
+
+### Analisis Kebutuhan Klien Nyata
+| Pernyataan dari catatan | Jenis | Kebutuhan di baliknya |
+|---|---|---|
+| "Pemasukan dan pengeluaran ditulis di buku kas tiap sore; akhir bulan dihitung ulang pakai kalkulator 1–2 jam." | Fakta | Pemilik perlu pencatatan transaksi harian yang otomatis menghitung total pemasukan, pengeluaran, dan saldo akhir. |
+| "Nota belanja kecil sering terselip atau salah ketik nominal saat disalin ke buku." | Fakta | Pengelola keuangan perlu cara cepat untuk memperbaiki atau menghapus transaksi yang salah catat serta mencari catatan tertentu. |
+| "Nota belanja hanya distaples tanpa dikelompokkan per kategori." | Fakta | Pemilik perlu mengelompokkan transaksi berdasarkan kategori agar mudah mengetahui pos pengeluaran terbesar. |
+| "Staf dan pemilik tidak terbiasa dengan rumus Excel yang rumit." | Fakta | Pengguna non-teknis memerlukan tampilan pencatatan yang sederhana, berbahasa Indonesia, dan dilengkapi panduan singkat. |
+| "Internet memakai tethering HP yang kadang tidak stabil." | Fakta | Pencatatan keuangan harus tetap dapat dijalankan dan menyimpan data secara lokal di komputer tanpa bergantung pada koneksi internet terus-menerus. |

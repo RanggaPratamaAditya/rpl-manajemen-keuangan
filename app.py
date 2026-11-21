@@ -6,6 +6,15 @@ from flask import Flask, redirect, render_template, request, url_for
 app = Flask(__name__)
 DATA_FILE = "data_keuangan.json"
 
+def salam_waktu(jam):
+    """Mengembalikan salam sesuai jam (0-23)."""
+    if 4 <= jam < 11:
+        return "Selamat pagi"
+    if 11 <= jam < 15:
+        return "Selamat siang"
+    if 15 <= jam < 18:
+        return "Selamat sore"
+    return "Selamat malam"
 
 def muat_transaksi():
     """Membaca daftar transaksi dari berkas JSON lokal."""
@@ -68,9 +77,12 @@ def beranda():
         t["nominal"] for t in daftar_transaksi if t["jenis"] == "pengeluaran"
     )
     saldo = total_pemasukan - total_pengeluaran
+    sekarang = datetime.now()
 
     return render_template(
         "index.html",
+        salam=salam_waktu(sekarang.hour),
+        waktu=sekarang.strftime("%d-%m-%Y %H:%M"),
         transaksi=list(reversed(daftar_transaksi)),
         total_pemasukan=total_pemasukan,
         total_pengeluaran=total_pengeluaran,

@@ -80,4 +80,4 @@
 ## Riwayat Konfirmasi Klien
 | Tanggal | Tanggapan | Perubahan |
 |---|---|---|
-| *(Diisi pada Langkah 14 setelah konfirmasi ke klien)* | | |
+| 21-11-2026 | Klien menyetujui seluruh daftar fitur Must, Should, dan Won't have. Daftar 5 kategori dinilai sudah sesuai, rekap cukup per bulan, format CSV dapat dibuka di laptop klien, dan klien setuju ada konfirmasi sebelum hapus transaksi. | Status asumsi pada KF-07 s.d. KF-10 diubah menjadi Tidak (terkonfirmasi); tidak ada perubahan urutan prioritas MoSCoW. |

@@ -53,7 +53,7 @@ Kriteria penerimaan:
 - **Could have (ditunda bila tidak ada sisa waktu):** Halaman panduan `/bantuan` (KF-11) dan peringatan batas anggaran bulanan (KF-12).
 
 ## 6. Pertanyaan Terbuka
-1. Apakah daftar 5 kategori awal (Penjualan, Bahan Baku, Operasional, Listrik/Air, Lainnya) sudah sesuai dengan kebutuhan klien?
-2. Apakah klien membutuhkan filter rekap mingguan selain filter per bulan?
-3. Apakah perlu kotak konfirmasi sebelum transaksi dihapus permanen?
-4. Apakah berkas CSV hasil ekspor dapat langsung dibuka dengan rapi di laptop klien?
+1. ~~Apakah daftar 5 kategori awal (Penjualan, Bahan Baku, Operasional, Listrik/Air, Lainnya) sudah sesuai dengan kebutuhan klien?~~ *(Terkonfirmasi 21-11-2026: sudah sesuai.)*
+2. ~~Apakah klien membutuhkan filter rekap mingguan selain filter per bulan?~~ *(Terkonfirmasi 21-11-2026: cukup filter per bulan.)*
+3. ~~Apakah perlu kotak konfirmasi sebelum transaksi dihapus permanen?~~ *(Terkonfirmasi 21-11-2026: ya, perlu peringatan sebelum hapus.)*
+4. ~~Apakah berkas CSV hasil ekspor dapat langsung dibuka dengan rapi di laptop klien?~~ *(Terkonfirmasi 21-11-2026: ya, dapat dibuka.)*

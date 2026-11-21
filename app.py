@@ -99,6 +99,10 @@ def hapus_transaksi(id_transaksi):
     simpan_transaksi(daftar_baru)
     return redirect(url_for("beranda"))
 
+@app.route("/tentang")
+def tentang():
+    """Menampilkan halaman identitas mahasiswa."""
+    return render_template("tentang.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

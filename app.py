@@ -46,7 +46,7 @@ def beranda():
 
     if request.method == "POST":
         # Ambil dan bersihkan masukan pengguna (validasi di sisi server)
-        keterangan = request.form.get("keterangan", "").strip()[:100]
+        keterangan = request.form.get("keterangan", "").strip()[:50]
         jenis = request.form.get("jenis", "").strip()
         nominal_teks = request.form.get("nominal", "").strip()
 

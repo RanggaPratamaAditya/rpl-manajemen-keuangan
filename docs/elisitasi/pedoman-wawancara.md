@@ -56,5 +56,5 @@
 | 14 | Harapan | Perubahan apa yang paling Bapak/Ibu harapkan dari proses pencatatan keuangan ke depannya? | Jika ada satu masalah pencatatan yang harus beres paling dulu, masalah mana yang paling mendesak? |
 
 ## D. Etika
-- **Izin klien diperoleh pada:** *(diisi saat Langkah 11 setelah klien menyetujui jadwal)*
-- **Data pribadi:** Nama lengkap pelanggan/pemasok, nomor telepon, alamat pribadi, dan nomor rekening tidak dicatat dan disamarkan menjadi peran/inisial.
+- **Izin klien diperoleh pada:** 21 November 2026 melalui pesan WhatsApp (bukti tangkapan layar terlampir pada laporan dengan nama dan nomor telepon disamarkan).
+- **Data pribadi:** Nama pemilik usaha, nama toko, nama pelanggan/pemasok, nomor telepon, dan alamat lengkap tidak dicatat serta disamarkan menjadi peran/inisial (mis. "Pemilik Usaha A", "Pemasok B").

@@ -7,9 +7,9 @@
   <strong>Total Pengeluaran:</strong> Rp {{ "{:,}".format(ringkasan.total_keluar).replace(",", ".") }} |
   <strong>Saldo Akhir:</strong> Rp {{ "{:,}".format(ringkasan.saldo).replace(",", ".") }}
 </p>
-<p><a href="{{ url_for('tambah_transaksi') }}">+ Catat Transaksi</a></p>
+<p><a class="tombol" href="{{ url_for('tambah_transaksi') }}">+ Catat Transaksi</a></p>
 
-<form method="get" style="margin: 12px 0;">
+<form class="cari" method="get">
   <input type="text" name="q" value="{{ kata }}" placeholder="Cari keterangan...">
   <select name="jenis">
     <option value="">-- Semua Jenis --</option>
@@ -21,6 +21,7 @@
   <a href="{{ url_for('daftar_transaksi') }}">Reset</a>
 </form>
 
+<div class="tabel-bungkus">
 <table>
   <thead>
     <tr>
@@ -37,10 +38,12 @@
       <td>Rp {{ "{:,}".format(t['nominal']).replace(",", ".") }}</td>
       <td>
         <a href="{{ url_for('ubah_transaksi', transaksi_id=t['id']) }}">Ubah</a>
-        <form method="post" action="{{ url_for('hapus_transaksi', transaksi_id=t['id']) }}" style="display:inline"
+        {% if g.pengguna['peran'] == 'pemilik' %}
+        <form class="baris" method="post" action="{{ url_for('hapus_transaksi', transaksi_id=t['id']) }}"
               onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">
           <button type="submit">Hapus</button>
         </form>
+        {% endif %}
       </td>
     </tr>
     {% else %}
@@ -52,4 +55,5 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 {% endblock %}

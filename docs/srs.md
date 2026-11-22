@@ -61,21 +61,21 @@
 3. **Aplikasi ponsel khusus (mobile native Android/iOS)** — *Alasan:* Klien memiliki keterbatasan anggaran dan perangkat utama di meja kasir adalah laptop standar.
 
 ## 6. Matriks Keterlacakan
-| User story | KF / KNF turunan | Use Case | Uji (diisi Minggu 13) |
+| User story | KF / KNF turunan | Use Case | Uji |
 |---|---|---|---|
-| US-01 | KF-01, KF-02 | UC-01, UC-02 | *(diisi Minggu 13)* |
-| US-02 | KF-02, KF-03 | UC-01, UC-02 | *(diisi Minggu 13)* |
-| US-03 | KF-04 | UC-03 | *(diisi Minggu 13)* |
-| US-04 | KF-05 | UC-05 | *(diisi Minggu 13)* |
-| US-05 | KF-06 | UC-04, UC-02 | *(diisi Minggu 13)* |
-| US-06 | KF-07 | UC-01 | *(diisi Minggu 13)* |
-| US-07 | KF-08 | UC-06 | *(diisi Minggu 13)* |
-| US-08 | KF-09 | UC-06 | *(diisi Minggu 13)* |
-| US-09 | KF-10 | UC-07 | *(diisi Minggu 13)* |
-| US-10 | KNF-02 | UC-01, UC-02, UC-04 | *(diisi Minggu 13)* |
-| US-11 | KF-11, KNF-04 | *(Could — opsional)* | *(diisi Minggu 13)* |
-| US-12 | KNF-01 | UC-01 s.d. UC-07 | *(diisi Minggu 13)* |
-| *(Asumsi / Backlog)* | KF-12, KNF-03, KNF-05 | *(Could / Non-fungsional)* | *(diisi Minggu 13)* |
+| US-01 | KF-01, KF-02 | UC-01, UC-02 | TC-01, TC-02, TC-03, TC-04, TC-05, TC-06 |
+| US-02 | KF-02, KF-03 | UC-01, UC-02 | TC-02, TC-03, TC-04, TC-07 |
+| US-03 | KF-04 | UC-03 | TC-08 |
+| US-04 | KF-05 | UC-05 | TC-09, TC-10 |
+| US-05 | KF-06 | UC-04, UC-02 | TC-11 |
+| US-06 | KF-07 | UC-01 | TC-12 |
+| US-07 | KF-08 | UC-06 | TC-13 |
+| US-08 | KF-09 | UC-06 | TC-14 |
+| US-09 | KF-10 | UC-07 | TC-15 |
+| US-10 | KNF-02 | UC-01, UC-02, UC-04 | TC-05, TC-06 |
+| US-11 | KF-11, KNF-04 | *(Could — opsional)* | *(Di luar Sprint 1)* |
+| US-12 | KNF-01 | UC-01 s.d. UC-07 | Uji lokal offline (Minggu 13) |
+| *(Asumsi / Backlog)* | KF-12, KNF-03, KNF-05 | *(Could / Non-fungsional)* | Uji tampilan & keterbacaan UAT |
 
 ## 7. Pemodelan UML
 Seluruh berkas pemodelan fungsi dan alur sistem tersimpan pada folder `docs/uml/`:

@@ -11,3 +11,7 @@
 1. **Antarmuka sesuai wireframe (`wf-01` s.d. `wf-07`):** Merapikan CSS lokal (ukuran teks >= 16 px, kontras tinggi, tombol kanan bawah, dan tampilan kartu ringkasan saldo di Beranda).
 2. **Autentikasi & Hak Akses 2 Peran:** Halaman `/login` dan `/logout` dengan *password hashing* (`werkzeug.security`), pembatasan menu `Kategori`, `Hapus Transaksi`, dan `Ekspor CSV` khusus peran `pemilik`.
 3. **Code Review & Keamanan (Minggu 12):** Menghapus `debug=True` saat rilis, memastikan `SECRET_KEY` aman, dan meninjau ulang seluruh rute terhadap daftar periksa keamanan.
+
+## Bahan Checkpoint Minggu 12 (Demo Prototipe 5 Menit)
+- **Fitur siap demo:** Login ter-hash (`pemilik` & `kasir`), pemisahan menu dan pembatasan peran `403`, CRUD `kategori` & `transaksi`, ringkasan saldo otomatis, pencarian & filter aman, ekspor CSV, serta uji otomatis `tests/uji_cepat.py`.
+- **Fitur tertunda (dikerjakan Minggu 12–13):** Proteksi CSRF, pembatasan percobaan login (*rate limiting*), konfigurasi rilis (`debug=False`, `SECRET_KEY` wajib), serta pengujian UAT bersama klien.

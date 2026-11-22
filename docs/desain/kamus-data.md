@@ -34,3 +34,10 @@
 | `kategori_id` | INTEGER | Ya | FK, UK* | Merujuk `kategori(id)`; unik bersama `bulan` | KF-12 |
 | `batas_nominal` | INTEGER | Ya | — | `> 0`; rupiah bulat tanpa desimal | KF-12 |
 | `pengguna_id` | INTEGER | Ya | FK | Merujuk `pengguna(id)` | KF-12 |
+
+---
+
+## Status Konfirmasi Aturan Data dengan Klien (Langkah 14)
+- **Tanggal konfirmasi:** 22-11-2026
+- **Hasil:** Seluruh aturan nilai (`nominal > 0` bilangan bulat, `nama_kategori` unik, `keterangan` 1–50 karakter, `UNIQUE(bulan, kategori_id)`, dan penghapusan permanen dengan konfirmasi) telah disetujui klien.
+- **Perubahan kolom/batasan:** Tidak ada perubahan. *(Catatan: bila klien meminta perubahan, misalnya batas keterangan jadi 100 karakter, ubah angka `50` di `kamus-data.md`, `schema.sql`, dan `tests/cek_skema.py` secara bersamaan.)*

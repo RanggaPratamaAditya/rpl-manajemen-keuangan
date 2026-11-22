@@ -6,6 +6,7 @@
   <p class="galat" role="alert">{{ g_ }}</p>
 {% endfor %}
 <form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label>Nama Kategori
     <input type="text" name="nama_kategori" value="{{ kategori.get('nama_kategori', '') }}" required maxlength="50">
   </label>

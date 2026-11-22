@@ -41,6 +41,7 @@
         {% if g.pengguna['peran'] == 'pemilik' %}
         <form class="baris" method="post" action="{{ url_for('hapus_transaksi', transaksi_id=t['id']) }}"
               onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit">Hapus</button>
         </form>
         {% endif %}

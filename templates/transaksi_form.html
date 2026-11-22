@@ -6,6 +6,7 @@
   <p class="galat" role="alert">{{ g_ }}</p>
 {% endfor %}
 <form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label>Tanggal (TTTT-BB-HH)
     <input type="date" name="tanggal" value="{{ transaksi.get('tanggal', default_tanggal) }}" required>
   </label>

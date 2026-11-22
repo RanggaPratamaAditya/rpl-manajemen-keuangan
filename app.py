@@ -1,6 +1,8 @@
 import csv
 import io
+import logging
 import os
+import secrets
 import sqlite3
 from datetime import date
 from functools import wraps
@@ -19,12 +21,36 @@ from flask import (
 )
 
 import models
+import percobaan
 import services
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "dev-only-ganti-di-produksi")
-app.config.update(SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+# Konfigurasi dari lingkungan. Pada produksi (APP_ENV=production) SECRET_KEY WAJIB diatur.
+PRODUKSI = os.environ.get("APP_ENV") == "production"
+app.secret_key = os.environ.get("SECRET_KEY")
+if not app.secret_key:
+    if PRODUKSI:
+        raise RuntimeError("SECRET_KEY wajib diatur pada lingkungan produksi.")
+    app.secret_key = "dev-only-ganti-di-produksi"  # hanya untuk pengembangan lokal
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=PRODUKSI,
+)
 models.init_db()
+
+
+def csrf_token():
+    """Token acak per sesi untuk setiap formulir POST."""
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_hex(16)
+    return session["csrf_token"]
+
+
+app.jinja_env.globals["csrf_token"] = csrf_token
 
 
 @app.before_request
@@ -32,6 +58,25 @@ def muat_pengguna():
     """Isi g.pengguna dari sesi; None bila belum masuk."""
     pengguna_id = session.get("pengguna_id")
     g.pengguna = models.ambil_pengguna(pengguna_id) if pengguna_id else None
+
+
+@app.before_request
+def periksa_csrf():
+    """Tolak POST tanpa token yang cocok dengan token sesi."""
+    if request.method == "POST":
+        dikirim = request.form.get("csrf_token", "").encode()
+        asli = session.get("csrf_token", "").encode()
+        if not asli or not secrets.compare_digest(dikirim, asli):
+            app.logger.warning("CSRF gagal path=%r ip=%s", request.path, request.remote_addr)
+            abort(400)
+
+
+@app.after_request
+def tambah_header(respons):
+    respons.headers["X-Content-Type-Options"] = "nosniff"
+    respons.headers["X-Frame-Options"] = "DENY"
+    respons.headers["Referrer-Policy"] = "same-origin"
+    return respons
 
 
 def peran_diperlukan(*peran):
@@ -74,22 +119,41 @@ def _form_transaksi(judul, transaksi, galat):
     )
 
 
+@app.errorhandler(400)
+def permintaan_buruk(_galat):
+    return render_template("400.html"), 400
+
+
 @app.errorhandler(403)
 def dilarang(_galat):
+    pengguna = g.pengguna["username"] if g.get("pengguna") else "-"
+    app.logger.warning("akses ditolak user=%r path=%r", pengguna, request.path)
     return render_template("403.html"), 403
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    galat = []
+    galat, status = [], 200
+    username = request.form.get("username", "")
     if request.method == "POST":
-        pengguna = services.autentikasi(request.form.get("username"), request.form.get("password"))
-        if pengguna:
-            session.clear()
-            session["pengguna_id"] = pengguna["id"]
-            return redirect(_tujuan_aman(request.args.get("next")) or url_for("daftar_transaksi"))
-        galat.append("Nama pengguna atau kata sandi salah.")
-    return render_template("login.html", galat=galat, username=request.form.get("username", ""))
+        kunci = f"{request.remote_addr}|{username.strip().lower()}"
+        if percobaan.terkunci(kunci):
+            app.logger.warning("login terkunci user=%r ip=%s", username, request.remote_addr)
+            galat.append("Terlalu banyak percobaan gagal. Coba lagi beberapa menit lagi.")
+            status = 429
+        else:
+            pengguna = services.autentikasi(username, request.form.get("password"))
+            if pengguna:
+                percobaan.reset(kunci)
+                session.clear()
+                session["pengguna_id"] = pengguna["id"]
+                app.logger.info("login berhasil user=%r", pengguna["username"])
+                return redirect(_tujuan_aman(request.args.get("next")) or url_for("daftar_transaksi"))
+            percobaan.catat_gagal(kunci)
+            app.logger.warning("login gagal user=%r ip=%s", username, request.remote_addr)
+            galat.append("Nama pengguna atau kata sandi salah.")
+            status = 401
+    return render_template("login.html", galat=galat, username=username), status
 
 
 @app.route("/logout", methods=["POST"])
@@ -269,4 +333,5 @@ def ekspor_csv():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Mode debug hanya bila diminta lewat lingkungan (FLASK_DEBUG=1) dan tidak pernah pada produksi.
+    app.run(debug=os.environ.get("FLASK_DEBUG") == "1" and not PRODUKSI)

@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% block judul %}Daftar Kategori{% endblock %}
 {% block isi %}
-<h1>Kelola Kategori (Khusus Pemilik)</h1>
-<p><a href="{{ url_for('tambah_kategori') }}">+ Tambah Kategori</a></p>
+<h1>Daftar Kategori</h1>
+<p><a class="tombol" href="{{ url_for('tambah_kategori') }}">+ Tambah Kategori</a></p>
+
+<div class="tabel-bungkus">
 <table>
   <thead>
     <tr>
-      <th>No</th>
       <th>Nama Kategori</th>
       <th>Jenis Bawaan</th>
       <th>Aksi</th>
@@ -15,21 +16,23 @@
   <tbody>
     {% for k in kategori %}
     <tr>
-      <td>{{ loop.index }}</td>
       <td>{{ k['nama_kategori'] }}</td>
       <td>{{ k['jenis_default'] }}</td>
-    <td>
+      <td>
         <a href="{{ url_for('ubah_kategori', kategori_id=k['id']) }}">Ubah</a>
-        <form action="{{ url_for('hapus_kategori', kategori_id=k['id']) }}" method="post" style="display: inline;">
-        <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">Hapus</button>
+        <form class="baris" method="post" action="{{ url_for('hapus_kategori', kategori_id=k['id']) }}"
+              onsubmit="return confirm('Yakin ingin menghapus kategori ini?')">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit">Hapus</button>
         </form>
-    </td>
+      </td>
     </tr>
     {% else %}
     <tr>
-      <td colspan="4">Belum ada data kategori.</td>
+      <td colspan="3">Belum ada data kategori.</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
+</div>
 {% endblock %}

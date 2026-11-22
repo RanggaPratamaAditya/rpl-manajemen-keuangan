@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block judul %}Permintaan Tidak Valid (400){% endblock %}
+{% block isi %}
+<h1>Permintaan Tidak Valid (400)</h1>
+<p class="galat" role="alert">Sesi formulir tidak valid atau kedaluwarsa (token CSRF tidak cocok). Silakan muat ulang halaman dan coba lagi.</p>
+<p><a href="{{ url_for('daftar_transaksi') }}">Kembali ke Riwayat Transaksi</a></p>
+{% endblock %}

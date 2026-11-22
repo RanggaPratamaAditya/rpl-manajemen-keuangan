@@ -148,3 +148,30 @@ def tambah_kategori_dan_transaksi(
             """,
             (tanggal, jenis, keterangan, nominal, kategori_id_baru, pengguna_id),
         )
+
+def _escape_like(teks):
+    """Netralkan % dan _ agar dicari sebagai huruf biasa pada LIKE."""
+    return teks.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+
+def cari_transaksi(kata="", jenis="", bulan=""):
+    """Daftar transaksi dengan JOIN kategori, opsional pencarian dan penyaringan."""
+    sql = (
+        "SELECT t.id, t.tanggal, t.jenis, t.keterangan, t.nominal, "
+        "       t.kategori_id, k.nama_kategori "
+        "FROM transaksi t "
+        "JOIN kategori k ON k.id = t.kategori_id "
+        "WHERE t.keterangan LIKE ? ESCAPE '\\'"
+    )
+    param = ["%" + _escape_like(kata) + "%"]
+
+    if jenis in ("pemasukan", "pengeluaran"):
+        sql += " AND t.jenis = ?"
+        param.append(jenis)
+    if bulan and len(bulan) == 7:
+        sql += " AND substr(t.tanggal, 1, 7) = ?"
+        param.append(bulan)
+
+    sql += " ORDER BY t.tanggal DESC, t.id DESC"
+    with koneksi() as db:
+        return db.execute(sql, param).fetchall()

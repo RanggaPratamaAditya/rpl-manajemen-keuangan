@@ -82,10 +82,17 @@ def hapus_kategori(kategori_id):
 
 @app.route("/transaksi")
 def daftar_transaksi():
+    kata = request.args.get("q", "").strip()
+    jenis = request.args.get("jenis", "").strip()
+    bulan = request.args.get("bulan", "").strip()
+    transaksi = models.cari_transaksi(kata, jenis, bulan)
     return render_template(
         "transaksi_list.html",
-        transaksi=models.semua_transaksi(),
+        transaksi=transaksi,
         ringkasan=models.ringkasan_saldo(),
+        kata=kata,
+        jenis=jenis,
+        bulan=bulan,
     )
 
 
@@ -181,6 +188,19 @@ def hapus_transaksi(transaksi_id):
     flash("Transaksi berhasil dihapus.")
     return redirect(url_for("daftar_transaksi"))
 
+def _form_kategori(judul, kategori, galat):
+    return render_template("kategori_form.html", judul=judul, kategori=kategori, galat=galat)
+
+
+def _form_transaksi(judul, transaksi, galat):
+    return render_template(
+        "transaksi_form.html",
+        judul=judul,
+        transaksi=transaksi,
+        kategori=models.semua_kategori(),
+        galat=galat,
+        default_tanggal=date.today().isoformat(),
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

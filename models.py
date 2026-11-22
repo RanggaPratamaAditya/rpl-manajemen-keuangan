@@ -30,3 +30,10 @@ def semua_kategori():
         return db.execute(
             "SELECT id, nama_kategori, jenis_default FROM kategori ORDER BY nama_kategori"
         ).fetchall()
+
+def tambah_kategori(nama_kategori, jenis_default):
+    with koneksi() as db:
+        db.execute(
+            "INSERT INTO kategori (nama_kategori, jenis_default) VALUES (?, ?)",
+            (nama_kategori, jenis_default),
+        )

@@ -90,3 +90,4 @@ Seluruh berkas pemodelan fungsi dan alur sistem tersimpan pada folder `docs/uml/
 | Tanggal | Tanggapan | Perubahan |
 |---|---|---|
 | 21-11-2026 | Klien menyetujui seluruh daftar fitur Must, Should, dan Won't have. Daftar 5 kategori dinilai sudah sesuai, rekap cukup per bulan, format CSV dapat dibuka di laptop klien, dan klien setuju ada konfirmasi sebelum hapus transaksi. | Status asumsi pada KF-07 s.d. KF-10 diubah menjadi Tidak (terkonfirmasi); tidak ada perubahan urutan prioritas MoSCoW. |
+| 22-11-2026 | Validasi UML (Use Case & Activity Catat Transaksi): Klien menyatakan alur pencatatan pemasukan/pengeluaran, pengecekan angka salah ketik, dan konfirmasi hapus sudah sesuai dengan cara kerja di usaha klien. | Tidak ada perubahan diagram maupun skenario; seluruh model UML dinyatakan sesuai. |

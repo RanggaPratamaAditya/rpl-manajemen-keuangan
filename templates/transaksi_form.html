@@ -2,20 +2,22 @@
 {% block judul %}{{ judul }}{% endblock %}
 {% block isi %}
 <h1>{{ judul }}</h1>
-{% for g in galat %}<p class="galat">{{ g }}</p>{% endfor %}
+{% for g_ in galat %}
+  <p class="galat" role="alert">{{ g_ }}</p>
+{% endfor %}
 <form method="post">
-  <p><label>Tanggal (YYYY-MM-DD)<br>
-    <input type="date" name="tanggal" value="{{ transaksi.get('tanggal', default_tanggal) }}">
-  </label></p>
-  <p><label>Jenis Transaksi<br>
-    <select name="jenis">
+  <label>Tanggal (TTTT-BB-HH)
+    <input type="date" name="tanggal" value="{{ transaksi.get('tanggal', default_tanggal) }}" required>
+  </label>
+  <label>Jenis Transaksi
+    <select name="jenis" required>
       <option value="">-- Pilih Jenis --</option>
       <option value="pemasukan" {% if transaksi.get('jenis') == 'pemasukan' %}selected{% endif %}>pemasukan</option>
       <option value="pengeluaran" {% if transaksi.get('jenis') == 'pengeluaran' %}selected{% endif %}>pengeluaran</option>
     </select>
-  </label></p>
-  <p><label>Kategori<br>
-    <select name="kategori_id">
+  </label>
+  <label>Kategori
+    <select name="kategori_id" required>
       <option value="">-- Pilih Kategori --</option>
       {% for k in kategori %}
       <option value="{{ k['id'] }}" {% if transaksi.get('kategori_id')|string == k['id']|string %}selected{% endif %}>
@@ -23,16 +25,16 @@
       </option>
       {% endfor %}
     </select>
-  </label></p>
-  <p><label>Keterangan (maks. 50 karakter)<br>
-    <input type="text" name="keterangan" maxlength="50" value="{{ transaksi.get('keterangan', '') }}" style="width:360px;">
-  </label></p>
-  <p><label>Nominal (Rp, angka bulat &gt; 0)<br>
-    <input type="text" name="nominal" value="{{ transaksi.get('nominal', '') }}">
-  </label></p>
+  </label>
+  <label>Keterangan (maks. 50 karakter)
+    <input type="text" name="keterangan" value="{{ transaksi.get('keterangan', '') }}" required maxlength="50">
+  </label>
+  <label>Nominal (Rp, angka bulat &gt; 0)
+    <input type="number" name="nominal" value="{{ transaksi.get('nominal', '') }}" required min="1" step="1">
+  </label>
   <p>
-    <a href="{{ url_for('daftar_transaksi') }}">Batal</a>
     <button type="submit">Simpan</button>
+    <a href="{{ url_for('daftar_transaksi') }}">Batal</a>
   </p>
 </form>
 {% endblock %}

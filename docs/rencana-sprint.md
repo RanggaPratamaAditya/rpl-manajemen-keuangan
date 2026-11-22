@@ -15,3 +15,8 @@
 ## Bahan Checkpoint Minggu 12 (Demo Prototipe 5 Menit)
 - **Fitur siap demo:** Login ter-hash (`pemilik` & `kasir`), pemisahan menu dan pembatasan peran `403`, CRUD `kategori` & `transaksi`, ringkasan saldo otomatis, pencarian & filter aman, ekspor CSV, serta uji otomatis `tests/uji_cepat.py`.
 - **Fitur tertunda (dikerjakan Minggu 12–13):** Proteksi CSRF, pembatasan percobaan login (*rate limiting*), konfigurasi rilis (`debug=False`, `SECRET_KEY` wajib), serta pengujian UAT bersama klien.
+
+## Rincian Target Sprint 3 (Minggu 13–14 — Pengujian, UAT, & Rilis v1.0)
+1. **Pengujian Menyeluruh (Minggu 13):** Melengkapi >= 20 test case (>= 8 uji otomatis `pytest` / `tests/uji_cepat.py`).
+2. **UAT Bersama Klien (Minggu 13–14):** Pengujian skenario pencatatan harian bersama klien UMKM dengan data fiktif dan mencatat berita acara UAT.
+3. **Tindak Lanjut Temuan Tertunda & Rilis `v1.0` (Minggu 14):** Memisahkan skrip konfirmasi hapus dari atribut `onsubmit` (temuan `P-05`), melengkapi `README.md` + manual pengguna, dan membuat tag rilis `v1.0`.

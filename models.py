@@ -8,13 +8,16 @@ SCHEMA = Path(__file__).parent / "docs" / "desain" / "schema.sql"
 
 @contextmanager
 def koneksi():
-    """Buka koneksi SQLite, aktifkan kunci asing, lalu commit dan tutup."""
+    """Buka koneksi SQLite, aktifkan kunci asing, commit jika sukses, rollback jika gagal."""
     db = sqlite3.connect(DB_PATH)
     db.row_factory = sqlite3.Row
     db.execute("PRAGMA foreign_keys = ON")
     try:
         yield db
         db.commit()
+    except Exception:
+        db.rollback()
+        raise
     finally:
         db.close()
 
@@ -25,11 +28,13 @@ def init_db():
         with koneksi() as db:
             db.executescript(SCHEMA.read_text(encoding="utf-8"))
 
+
 def semua_kategori():
     with koneksi() as db:
         return db.execute(
             "SELECT id, nama_kategori, jenis_default FROM kategori ORDER BY nama_kategori"
         ).fetchall()
+
 
 def tambah_kategori(nama_kategori, jenis_default):
     with koneksi() as db:
@@ -37,6 +42,7 @@ def tambah_kategori(nama_kategori, jenis_default):
             "INSERT INTO kategori (nama_kategori, jenis_default) VALUES (?, ?)",
             (nama_kategori, jenis_default),
         )
+
 
 def ambil_kategori(kategori_id):
     with koneksi() as db:
@@ -53,16 +59,18 @@ def ubah_kategori(kategori_id, nama_kategori, jenis_default):
             (nama_kategori, jenis_default, kategori_id),
         )
 
+
 def hapus_kategori(kategori_id):
     with koneksi() as db:
         db.execute("DELETE FROM kategori WHERE id = ?", (kategori_id,))
+
 
 def semua_transaksi():
     with koneksi() as db:
         return db.execute(
             """
             SELECT t.id, t.tanggal, t.jenis, t.keterangan, t.nominal,
-                   t.kategori_id, k.nama_kategori
+                   t.kategori_id, k.nama_kategori AS nama_kategori
             FROM transaksi t
             JOIN kategori k ON k.id = t.kategori_id
             ORDER BY t.tanggal DESC, t.id DESC
@@ -83,8 +91,8 @@ def ringkasan_saldo():
         row = db.execute(
             """
             SELECT
-            COALESCE(SUM(CASE WHEN jenis = 'pemasukan' THEN nominal ELSE 0 END), 0) AS total_masuk,
-            COALESCE(SUM(CASE WHEN jenis = 'pengeluaran' THEN nominal ELSE 0 END), 0) AS total_keluar
+                COALESCE(SUM(CASE WHEN jenis = 'pemasukan' THEN nominal ELSE 0 END), 0) AS total_masuk,
+                COALESCE(SUM(CASE WHEN jenis = 'pengeluaran' THEN nominal ELSE 0 END), 0) AS total_keluar
             FROM transaksi
             """
         ).fetchone()
@@ -121,3 +129,22 @@ def ubah_transaksi(transaksi_id, tanggal, jenis, keterangan, nominal, kategori_i
 def hapus_transaksi(transaksi_id):
     with koneksi() as db:
         db.execute("DELETE FROM transaksi WHERE id = ?", (transaksi_id,))
+
+
+def tambah_kategori_dan_transaksi(
+    nama_kategori, jenis_default, tanggal, jenis, keterangan, nominal, pengguna_id=1
+):
+    """Buat kategori baru sekaligus catat transaksi pertamanya dalam satu transaksi atomik."""
+    with koneksi() as db:
+        cur = db.execute(
+            "INSERT INTO kategori (nama_kategori, jenis_default) VALUES (?, ?)",
+            (nama_kategori, jenis_default),
+        )
+        kategori_id_baru = cur.lastrowid
+        db.execute(
+            """
+            INSERT INTO transaksi (tanggal, jenis, keterangan, nominal, kategori_id, pengguna_id)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (tanggal, jenis, keterangan, nominal, kategori_id_baru, pengguna_id),
+        )

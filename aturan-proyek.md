@@ -5,11 +5,13 @@
 - Paket eksternal lain hanya boleh ditambahkan setelah disetujui kelompok dan dicatat pada `requirements.txt`.
 
 ## Struktur Folder
-- `app.py`: berkas utama aplikasi Flask dan rute.
-- `templates/`: templat HTML (Jinja2 dengan auto-escaping aktif).
+- `app.py`: routes / controller (menerima HTTP, memanggil `services.py`, merender templat).
+- `services.py`: logika bisnis aplikasi (validasi masukan, perhitungan saldo).
+- `models.py`: satu-satunya berkas yang mengakses basis data SQLite.
+- `templates/`: view templat HTML (Jinja2 dengan auto-escaping aktif).
 - `static/`: berkas gaya CSS atau aset statis.
-- `tests/`: berkas uji otomatis (ditambahkan pada Minggu 13).
-- `docs/`: seluruh dokumen proyek (`kesepakatan-tim.md`, `product-backlog.md`, `srs.md`, dan folder `docs/elisitasi/`).
+- `tests/`: berkas uji (`cek_skema.py` dan uji otomatis Minggu 13).
+- `docs/`: seluruh dokumen proyek (`kesepakatan-tim.md`, `product-backlog.md`, `srs.md`, `elisitasi/`, `uml/`, `desain/`).
 - Folder utama (*root*): `PRD.md`, `aturan-proyek.md`, `jurnal-vibe-coding.md`, dan `.github/pull_request_template.md`.
 
 ## Konvensi
@@ -18,11 +20,12 @@
 - Satu fitur/perbaikan dikerjakan pada satu branch terpisah (`fitur-...`, `perbaikan-...`, `docs-...`) dan digabung lewat Pull Request.
 
 ## Larangan
+- Hanya `models.py` yang boleh mengakses SQLite dan menulis perintah SQL (`app.py` dan `services.py` dilarang menulis SQL).
+- Selalu aktifkan `PRAGMA foreign_keys = ON;` pada setiap koneksi SQLite.
+- Jangan menyimpan nilai turunan (seperti `saldo_akhir` atau `total`) di basis data.
 - Jangan menambah paket/pustaka luar tanpa izin.
-- Jangan menaruh kata sandi, token, kunci akses, atau data pribadi klien di dalam kode maupun dokumen.
-- Jangan mengubah berkas di luar yang diminta pada prompt.
-- Jangan menghapus, melewati, atau melemahkan pengujian yang sudah ada.
-- Jangan menuliskan fitur di luar `PRD.md` tanpa persetujuan.
+- Jangan menaruh kata sandi asli, token, kunci akses, atau data pribadi klien di dalam kode maupun dokumen.
+- Jangan mengubah berkas di luar yang diminta pada prompt; jangan menghapus atau melemahkan uji.
 
 ## Menjalankan dan Menguji
 - Aktifkan lingkungan virtual (`.venv\Scripts\Activate.ps1`), lalu jalankan aplikasi dengan:

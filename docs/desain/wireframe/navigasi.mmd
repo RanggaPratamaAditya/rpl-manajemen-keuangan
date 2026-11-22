@@ -1,0 +1,9 @@
+flowchart LR
+    L(["Login"]) --> B(["Beranda & Ringkasan Saldo"])
+    B <--> C(["Catat Transaksi"])
+    B <--> R(["Riwayat & Filter"])
+    R <--> U(["Ubah Transaksi"])
+    B <--> K(["Kelola Kategori (Pemilik)"])
+    B <--> E(["Ekspor Rekap CSV (Pemilik)"])
+    B -.-> O(["Keluar"])
+    O --> L

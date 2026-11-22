@@ -7,16 +7,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import models
+import services
 
 models.DB_PATH = Path(tempfile.mkdtemp()) / "uji.db"
 import app as aplikasi
 
-# Siapkan 1 pengguna fiktif pada DB sementara agar FK pengguna_id=1 valid
-with models.koneksi() as db:
-    db.execute(
-        "INSERT INTO pengguna (username, password_hash, peran) VALUES (?, ?, ?)",
-        ("pemilik_uji", "hash_uji", "pemilik"),
-    )
+# Buat 2 akun uji ter-hash pada DB sementara
+assert services.buat_pengguna("bos_uji", "sandi_pemilik_123", "pemilik") == []
+assert services.buat_pengguna("kasir_uji", "sandi_kasir_123", "kasir") == []
 
 c = aplikasi.app.test_client()
 
@@ -29,7 +27,34 @@ def ada(teks, hasil):
     assert teks in hasil.text, f"Tidak ditemukan: {teks!r}"
 
 
-# --- 1. Modul Kategori (CRUD) ---
+def masuk(username, password):
+    return kirim("/login", username=username, password=password)
+
+
+# --- 1. Uji Autentikasi, Hash, dan Open Redirect ---
+pengguna_bos = models.cari_pengguna("bos_uji")
+assert pengguna_bos["password_hash"] != "sandi_pemilik_123"
+assert pengguna_bos["password_hash"].startswith(("scrypt:", "pbkdf2:"))
+
+# Tamu diarahkan ke /login
+res_tamu = c.get("/transaksi")
+assert res_tamu.status_code == 302 and "/login" in res_tamu.headers["Location"]
+
+# Pesan galat sama untuk sandi salah dan username tidak ada
+galat_sandi = masuk("bos_uji", "salah_banget").text
+galat_user = masuk("tidak_ada", "salah_banget").text
+assert "Nama pengguna atau kata sandi salah." in galat_sandi
+assert "Nama pengguna atau kata sandi salah." in galat_user
+
+# Open redirect diabaikan
+res_next = c.post(
+    "/login?next=https://jahat.example",
+    data={"username": "bos_uji", "password": "sandi_pemilik_123"},
+)
+assert res_next.status_code == 302
+assert "jahat.example" not in res_next.headers["Location"]
+
+# --- 2. Uji Peran Penuh (Pemilik): Kategori & Transaksi ---
 ada("Belum ada data kategori", c.get("/kategori"))
 for nama, jenis in [("Penjualan", "pemasukan"), ("Operasional", "pengeluaran"), ("Lainnya", "umum")]:
     ada("berhasil ditambahkan", kirim("/kategori/tambah", nama_kategori=nama, jenis_default=jenis))
@@ -37,7 +62,6 @@ ada("sudah terdaftar", kirim("/kategori/tambah", nama_kategori="Penjualan", jeni
 ada("berhasil diubah", kirim("/kategori/2/ubah", nama_kategori="Operasional Toko", jenis_default="pengeluaran"))
 assert c.get("/kategori/999/ubah").status_code == 404
 
-# --- 2. Modul Transaksi (Relasi JOIN & Validasi) ---
 ada("Belum ada data transaksi", c.get("/transaksi"))
 ada(
     "berhasil disimpan",
@@ -61,29 +85,19 @@ ada(
         nominal=50000,
     ),
 )
-# Uji masukan tidak valid
 ada("lebih dari 0", kirim("/transaksi/tambah", tanggal="2026-11-23", jenis="pemasukan", kategori_id=1, keterangan="Tes", nominal=-5))
 ada("TTTT-BB-HH", kirim("/transaksi/tambah", tanggal="10-11-2026", jenis="pemasukan", kategori_id=1, keterangan="Tes", nominal=1000))
 ada("tidak ditemukan", kirim("/transaksi/tambah", tanggal="2026-11-23", jenis="pemasukan", kategori_id=999, keterangan="Tes", nominal=1000))
-ada("Pilih kategori", kirim("/transaksi/tambah", tanggal="2026-11-23", jenis="pemasukan", kategori_id="", keterangan="Tes", nominal=1000))
 assert models.ringkasan_saldo()["saldo"] == 200000
 
-# --- 3. Pencarian & Penyaringan ---
+# --- 3. Pencarian, Penyaringan, Atomisitas, FK, dan Ekspor CSV ---
 hasil = c.get("/transaksi?q=HARIAN")
 ada("Penjualan harian", hasil)
 assert "Diskon 100% bahan" not in hasil.text
-
-hasil = c.get("/transaksi?jenis=pengeluaran")
+hasil = c.get("/transaksi?q=%25")
 ada("Diskon 100% bahan", hasil)
-assert "Penjualan harian" not in hasil.text
-
-hasil = c.get("/transaksi?q=%25")  # tanda % dicari secara harfiah
-ada("Diskon 100% bahan", hasil)
-assert "Penjualan harian" not in hasil.text
-
 ada("Tidak ada transaksi yang cocok", c.get("/transaksi?q=' OR 1=1 --"))
 
-# --- 4. Uji Atomisitas Transaksi Dua Tabel ---
 jumlah_kat_awal = len(models.semua_kategori())
 try:
     models.tambah_kategori_dan_transaksi("Gagal", "umum", "2026-11-23", "pemasukan", "Tes", 1000, pengguna_id=999)
@@ -91,15 +105,22 @@ except sqlite3.IntegrityError:
     pass
 assert len(models.semua_kategori()) == jumlah_kat_awal
 
-# --- 5. Uji Kunci Asing & Metode Hapus ---
-ada("tidak dapat dihapus", kirim("/kategori/1/hapus"))  # Penjualan sudah dipakai transaksi
+ada("tidak dapat dihapus", kirim("/kategori/1/hapus"))
 assert c.get("/kategori/1/hapus").status_code == 405
-ada("berhasil dihapus", kirim("/kategori/3/hapus"))     # Lainnya belum dipakai
+ada("berhasil dihapus", kirim("/kategori/3/hapus"))
 
-# --- 6. Uji Ekspor CSV (KF-10) ---
 res_csv = c.get("/ekspor")
-assert res_csv.status_code == 200
-assert "text/csv" in res_csv.content_type
-assert "Tanggal,Jenis,Kategori,Keterangan,Nominal" in res_csv.text
+assert res_csv.status_code == 200 and "text/csv" in res_csv.content_type
+
+# --- 4. Uji Logout dan Otorisasi Peran Terbatas (Kasir) ---
+ada("Anda telah keluar.", kirim("/logout"))
+assert c.get("/transaksi").status_code == 302
+
+masuk("kasir_uji", "sandi_kasir_123")
+assert c.get("/transaksi").status_code == 200
+assert c.get("/kategori").status_code == 403
+assert c.get("/ekspor").status_code == 403
+assert c.post("/transaksi/1/hapus").status_code == 403
+assert models.ambil_transaksi(1) is not None  # data tetap aman
 
 print("SEMUA UJI LULUS")

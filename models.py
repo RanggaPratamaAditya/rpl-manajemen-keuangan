@@ -52,3 +52,7 @@ def ubah_kategori(kategori_id, nama_kategori, jenis_default):
             "UPDATE kategori SET nama_kategori = ?, jenis_default = ? WHERE id = ?",
             (nama_kategori, jenis_default, kategori_id),
         )
+
+def hapus_kategori(kategori_id):
+    with koneksi() as db:
+        db.execute("DELETE FROM kategori WHERE id = ?", (kategori_id,))

@@ -54,5 +54,17 @@ def ubah_kategori(kategori_id):
         return render_template("kategori_form.html", judul="Ubah Kategori", kategori=request.form, galat=galat)
     return render_template("kategori_form.html", judul="Ubah Kategori", kategori=dict(kategori), galat=[])
 
+@app.route("/kategori/<int:kategori_id>/hapus", methods=["POST"])
+def hapus_kategori(kategori_id):
+    if models.ambil_kategori(kategori_id) is None:
+        abort(404)
+    try:
+        models.hapus_kategori(kategori_id)
+    except sqlite3.IntegrityError:
+        flash("Kategori tidak dapat dihapus karena sudah dipakai pada transaksi.")
+    else:
+        flash("Kategori berhasil dihapus.")
+    return redirect(url_for("daftar_kategori"))
+
 if __name__ == "__main__":
     app.run(debug=True)

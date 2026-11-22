@@ -18,7 +18,12 @@
       <td>{{ loop.index }}</td>
       <td>{{ k['nama_kategori'] }}</td>
       <td>{{ k['jenis_default'] }}</td>
-      <td>—</td>
+    <td>
+        <a href="{{ url_for('ubah_kategori', kategori_id=k['id']) }}">Ubah</a>
+        <form action="{{ url_for('hapus_kategori', kategori_id=k['id']) }}" method="post" style="display: inline;">
+        <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">Hapus</button>
+        </form>
+    </td>
     </tr>
     {% else %}
     <tr>

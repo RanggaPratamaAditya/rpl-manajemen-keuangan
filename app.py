@@ -1,7 +1,7 @@
 import os
 import sqlite3
 
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import Flask, abort, flash, redirect, render_template, request, url_for
 
 import models
 import services
@@ -36,6 +36,35 @@ def tambah_kategori():
         return render_template("kategori_form.html", judul="Tambah Kategori", kategori=request.form, galat=galat)
     return render_template("kategori_form.html", judul="Tambah Kategori", kategori={}, galat=[])
 
+@app.route("/kategori/<int:kategori_id>/ubah", methods=["GET", "POST"])
+def ubah_kategori(kategori_id):
+    kategori = models.ambil_kategori(kategori_id)
+    if kategori is None:
+        abort(404)
+    if request.method == "POST":
+        data, galat = services.validasi_kategori(request.form)
+        if not galat:
+            try:
+                models.ubah_kategori(kategori_id, data["nama_kategori"], data["jenis_default"])
+            except sqlite3.IntegrityError:
+                galat.append("Nama kategori sudah terdaftar.")
+            else:
+                flash("Kategori berhasil diubah.")
+                return redirect(url_for("daftar_kategori"))
+        return render_template("kategori_form.html", judul="Ubah Kategori", kategori=request.form, galat=galat)
+    return render_template("kategori_form.html", judul="Ubah Kategori", kategori=dict(kategori), galat=[])
+
+@app.route("/kategori/<int:kategori_id>/hapus", methods=["POST"])
+def hapus_kategori(kategori_id):
+    if models.ambil_kategori(kategori_id) is None:
+        abort(404)
+    try:
+        models.hapus_kategori(kategori_id)
+    except sqlite3.IntegrityError:
+        flash("Kategori tidak dapat dihapus karena sudah dipakai pada transaksi.")
+    else:
+        flash("Kategori berhasil dihapus.")
+    return redirect(url_for("daftar_kategori"))
 
 if __name__ == "__main__":
     app.run(debug=True)

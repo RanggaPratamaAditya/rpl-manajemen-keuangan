@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block judul %}{{ judul }}{% endblock %}
+{% block isi %}
+<h1>{{ judul }}</h1>
+{% for g in galat %}
+  <p class="galat">{{ g }}</p>
+{% endfor %}
+<form method="post">
+  <p>
+    <label>Nama Kategori<br>
+      <input type="text" name="nama_kategori" value="{{ kategori.get('nama_kategori', '') }}" style="width:320px; padding:6px;">
+    </label>
+  </p>
+  <p>
+    <label>Jenis Bawaan<br>
+      <select name="jenis_default" style="padding:6px;">
+        <option value="">-- Pilih Jenis --</option>
+        <option value="pemasukan" {% if kategori.get('jenis_default') == 'pemasukan' %}selected{% endif %}>pemasukan</option>
+        <option value="pengeluaran" {% if kategori.get('jenis_default') == 'pengeluaran' %}selected{% endif %}>pengeluaran</option>
+        <option value="umum" {% if kategori.get('jenis_default') == 'umum' %}selected{% endif %}>umum</option>
+      </select>
+    </label>
+  </p>
+  <p>
+    <a href="{{ url_for('daftar_kategori') }}">Batal</a>
+    <button type="submit">Simpan Kategori</button>
+  </p>
+</form>
+{% endblock %}

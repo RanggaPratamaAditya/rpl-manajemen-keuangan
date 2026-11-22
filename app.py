@@ -1,11 +1,10 @@
 import os
 
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, render_template, url_for
 
 import models
 
 app = Flask(__name__)
-# Kunci rahasia dibaca dari lingkungan; nilai bawaan hanya untuk pengembangan lokal.
 app.secret_key = os.environ.get("SECRET_KEY", "dev-only-ganti-di-produksi")
 models.init_db()
 
@@ -17,7 +16,12 @@ def beranda():
 
 @app.route("/kategori")
 def daftar_kategori():
-    return "Kerangka Sistem Manajemen Keuangan UMKM berjalan."
+    return render_template("kategori_list.html", kategori=models.semua_kategori())
+
+
+@app.route("/kategori/tambah")
+def tambah_kategori():
+    return "Form tambah kategori (Siklus 3)"
 
 
 if __name__ == "__main__":

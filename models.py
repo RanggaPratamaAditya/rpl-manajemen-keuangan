@@ -24,3 +24,9 @@ def init_db():
     if not DB_PATH.exists():
         with koneksi() as db:
             db.executescript(SCHEMA.read_text(encoding="utf-8"))
+
+def semua_kategori():
+    with koneksi() as db:
+        return db.execute(
+            "SELECT id, nama_kategori, jenis_default FROM kategori ORDER BY nama_kategori"
+        ).fetchall()

@@ -18,7 +18,7 @@
       <td>{{ loop.index }}</td>
       <td>{{ k['nama_kategori'] }}</td>
       <td>{{ k['jenis_default'] }}</td>
-      <td>—</td>
+      <td><a href="{{ url_for('ubah_kategori', kategori_id=k['id']) }}">Ubah</a></td>
     </tr>
     {% else %}
     <tr>

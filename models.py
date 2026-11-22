@@ -37,3 +37,18 @@ def tambah_kategori(nama_kategori, jenis_default):
             "INSERT INTO kategori (nama_kategori, jenis_default) VALUES (?, ?)",
             (nama_kategori, jenis_default),
         )
+
+def ambil_kategori(kategori_id):
+    with koneksi() as db:
+        return db.execute(
+            "SELECT id, nama_kategori, jenis_default FROM kategori WHERE id = ?",
+            (kategori_id,),
+        ).fetchone()
+
+
+def ubah_kategori(kategori_id, nama_kategori, jenis_default):
+    with koneksi() as db:
+        db.execute(
+            "UPDATE kategori SET nama_kategori = ?, jenis_default = ? WHERE id = ?",
+            (nama_kategori, jenis_default, kategori_id),
+        )

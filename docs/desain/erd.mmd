@@ -1,0 +1,36 @@
+erDiagram
+    PENGGUNA ||--o{ TRANSAKSI : mencatat
+    KATEGORI ||--o{ TRANSAKSI : mengelompokkan
+    KATEGORI ||--o{ ANGGARAN_BULANAN : memiliki_batas
+    PENGGUNA ||--o{ ANGGARAN_BULANAN : menetapkan
+
+    PENGGUNA {
+        int id PK
+        text username UK
+        text password_hash
+        text peran
+    }
+
+    KATEGORI {
+        int id PK
+        text nama_kategori UK
+        text jenis_default
+    }
+
+    TRANSAKSI {
+        int id PK
+        text tanggal
+        text jenis
+        text keterangan
+        int nominal
+        int kategori_id FK
+        int pengguna_id FK
+    }
+
+    ANGGARAN_BULANAN {
+        int id PK
+        text bulan
+        int kategori_id FK
+        int batas_nominal
+        int pengguna_id FK
+    }

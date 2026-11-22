@@ -175,3 +175,26 @@ def cari_transaksi(kata="", jenis="", bulan=""):
     sql += " ORDER BY t.tanggal DESC, t.id DESC"
     with koneksi() as db:
         return db.execute(sql, param).fetchall()
+
+def cari_pengguna(username):
+    with koneksi() as db:
+        return db.execute(
+            "SELECT id, username, password_hash, peran FROM pengguna WHERE username = ?",
+            (username,),
+        ).fetchone()
+
+
+def ambil_pengguna(pengguna_id):
+    with koneksi() as db:
+        return db.execute(
+            "SELECT id, username, peran FROM pengguna WHERE id = ?",
+            (pengguna_id,),
+        ).fetchone()
+
+
+def tambah_pengguna(username, password_hash, peran):
+    with koneksi() as db:
+        db.execute(
+            "INSERT INTO pengguna (username, password_hash, peran) VALUES (?, ?, ?)",
+            (username, password_hash, peran),
+        )

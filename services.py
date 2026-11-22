@@ -1,7 +1,16 @@
+import re
 from datetime import date
+
+from werkzeug.security import check_password_hash, generate_password_hash
+
+import models
 
 JENIS_KATEGORI_VALID = ("pemasukan", "pengeluaran", "umum")
 JENIS_TRANSAKSI_VALID = ("pemasukan", "pengeluaran")
+PERAN = ("pemilik", "kasir")
+
+# Hash palsu agar waktu respons sama saat username tidak ditemukan
+_HASH_PALSU = generate_password_hash("bukan-kata-sandi-sungguhan")
 
 
 def validasi_kategori(form):
@@ -59,3 +68,31 @@ def validasi_transaksi(form):
         "kategori_id": kategori_id,
     }
     return data, galat
+
+
+def validasi_pengguna_baru(username, password, peran):
+    """Aturan pembuatan akun; kembalikan daftar galat."""
+    galat = []
+    if not re.fullmatch(r"[A-Za-z0-9_]{3,30}", username or ""):
+        galat.append("Nama pengguna 3-30 karakter: huruf, angka, atau garis bawah.")
+    if len(password or "") < 8:
+        galat.append("Kata sandi minimal 8 karakter.")
+    if peran not in PERAN:
+        galat.append("Peran harus pemilik atau kasir.")
+    return galat
+
+
+def buat_pengguna(username, password, peran):
+    """Simpan pengguna dengan kata sandi ter-hash. Kembalikan daftar galat."""
+    galat = validasi_pengguna_baru(username, password, peran)
+    if not galat:
+        models.tambah_pengguna(username, generate_password_hash(password), peran)
+    return galat
+
+
+def autentikasi(username, password):
+    """Kembalikan baris pengguna bila cocok, selain itu None."""
+    pengguna = models.cari_pengguna((username or "").strip())
+    hash_tersimpan = pengguna["password_hash"] if pengguna else _HASH_PALSU
+    cocok = check_password_hash(hash_tersimpan, password or "")
+    return pengguna if (pengguna and cocok) else None

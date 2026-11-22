@@ -82,10 +82,17 @@ def hapus_kategori(kategori_id):
 
 @app.route("/transaksi")
 def daftar_transaksi():
+    kata = request.args.get("q", "").strip()
+    jenis = request.args.get("jenis", "").strip()
+    bulan = request.args.get("bulan", "").strip()
+    transaksi = models.cari_transaksi(kata, jenis, bulan)
     return render_template(
         "transaksi_list.html",
-        transaksi=models.semua_transaksi(),
+        transaksi=transaksi,
         ringkasan=models.ringkasan_saldo(),
+        kata=kata,
+        jenis=jenis,
+        bulan=bulan,
     )
 
 

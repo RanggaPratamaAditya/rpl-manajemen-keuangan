@@ -8,6 +8,19 @@
   <strong>Saldo Akhir:</strong> Rp {{ "{:,}".format(ringkasan.saldo).replace(",", ".") }}
 </p>
 <p><a href="{{ url_for('tambah_transaksi') }}">+ Catat Transaksi</a></p>
+
+<form method="get" style="margin: 12px 0;">
+  <input type="text" name="q" value="{{ kata }}" placeholder="Cari keterangan...">
+  <select name="jenis">
+    <option value="">-- Semua Jenis --</option>
+    <option value="pemasukan" {% if jenis == 'pemasukan' %}selected{% endif %}>pemasukan</option>
+    <option value="pengeluaran" {% if jenis == 'pengeluaran' %}selected{% endif %}>pengeluaran</option>
+  </select>
+  <input type="month" name="bulan" value="{{ bulan }}">
+  <button type="submit">Cari</button>
+  <a href="{{ url_for('daftar_transaksi') }}">Reset</a>
+</form>
+
 <table>
   <thead>
     <tr>
@@ -31,7 +44,11 @@
       </td>
     </tr>
     {% else %}
-    <tr><td colspan="6">Belum ada data transaksi.</td></tr>
+    <tr>
+      <td colspan="6">
+        {% if kata or jenis or bulan %}Tidak ada transaksi yang cocok.{% else %}Belum ada data transaksi.{% endif %}
+      </td>
+    </tr>
     {% endfor %}
   </tbody>
 </table>

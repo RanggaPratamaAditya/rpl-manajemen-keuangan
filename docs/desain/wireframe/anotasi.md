@@ -21,3 +21,7 @@
   1. **Pencegahan galat:** Ditambahkan kotak dialog konfirmasi *"Yakin ingin menghapus transaksi ini? [Batal] [Ya, Hapus]"* sebelum data dihapus permanen, dan tombol `Hapus` hanya ditampilkan untuk peran `Pemilik`.
   2. **Umpan balik:** Ditambahkan kotak pesan khusus di atas tabel untuk menampilkan *"Tidak ada transaksi pada periode ini"* atau *"Transaksi berhasil dihapus"*.
   3. **Kesederhanaan:** Formulir pencatatan dipisahkan ke halaman tersendiri (`wf-03-catat-transaksi.png`) agar halaman riwayat fokus pada pencarian dan penyaringan data.
+
+  ## 3. Revisi Pasca-Design Review (Langkah 12)
+- **`wf-03` (Catat Transaksi):** Kolom `Tanggal` ditetapkan otomatis terisi tanggal hari ini (*default today*) untuk mempercepat input harian (`KNF-04`).
+- **`wf-03` & `wf-05` (Keterangan):** Ditambahkan penunjuk batas karakter (`maks. 50 karakter`) di samping isian untuk mencegah galat kepanjangan teks (`KNF-02`).

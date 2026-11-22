@@ -1,0 +1,16 @@
+flowchart TD
+    A((Mulai)) --> B["Pengguna menekan tombol Ubah pada baris transaksi"]
+    B --> C["Sistem menampilkan formulir ubah berisi data lama"]
+    C --> D{"Pengguna menekan Batal?"}
+    D -->|Ya| E["Sistem menutup formulir tanpa mengubah data"]
+    E --> K((Selesai))
+    D -->|Tidak| F["Pengguna mengubah data dan menekan Simpan Perubahan"]
+    F --> G{"Nominal berupa angka bulat positif?"}
+    G -->|Tidak| H["Sistem menampilkan pesan nominal harus lebih dari 0"]
+    H --> C
+    G -->|Ya| I{"Keterangan lebih dari 50 karakter?"}
+    I -->|Ya| J["Sistem memotong keterangan menjadi 50 karakter"]
+    I -->|Tidak| L["Sistem memperbarui data transaksi dan menghitung ulang saldo"]
+    J --> L
+    L --> M["Sistem menampilkan halaman utama terbaru"]
+    M --> K

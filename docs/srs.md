@@ -61,21 +61,30 @@
 3. **Aplikasi ponsel khusus (mobile native Android/iOS)** — *Alasan:* Klien memiliki keterbatasan anggaran dan perangkat utama di meja kasir adalah laptop standar.
 
 ## 6. Matriks Keterlacakan
-| User story | KF / KNF turunan | Uji (diisi Minggu 13) |
-|---|---|---|
-| US-01 | KF-01, KF-02 | *(diisi Minggu 13)* |
-| US-02 | KF-02, KF-03 | *(diisi Minggu 13)* |
-| US-03 | KF-04 | *(diisi Minggu 13)* |
-| US-04 | KF-05 | *(diisi Minggu 13)* |
-| US-05 | KF-06 | *(diisi Minggu 13)* |
-| US-06 | KF-07 | *(diisi Minggu 13)* |
-| US-07 | KF-08 | *(diisi Minggu 13)* |
-| US-08 | KF-09 | *(diisi Minggu 13)* |
-| US-09 | KF-10 | *(diisi Minggu 13)* |
-| US-10 | KNF-02 | *(diisi Minggu 13)* |
-| US-11 | KF-11, KNF-04 | *(diisi Minggu 13)* |
-| US-12 | KNF-01 | *(diisi Minggu 13)* |
-| *(Asumsi / Backlog)* | KF-12, KNF-03, KNF-05 | *(diisi Minggu 13)* |
+| User story | KF / KNF turunan | Use Case | Uji (diisi Minggu 13) |
+|---|---|---|---|
+| US-01 | KF-01, KF-02 | UC-01, UC-02 | *(diisi Minggu 13)* |
+| US-02 | KF-02, KF-03 | UC-01, UC-02 | *(diisi Minggu 13)* |
+| US-03 | KF-04 | UC-03 | *(diisi Minggu 13)* |
+| US-04 | KF-05 | UC-05 | *(diisi Minggu 13)* |
+| US-05 | KF-06 | UC-04, UC-02 | *(diisi Minggu 13)* |
+| US-06 | KF-07 | UC-01 | *(diisi Minggu 13)* |
+| US-07 | KF-08 | UC-06 | *(diisi Minggu 13)* |
+| US-08 | KF-09 | UC-06 | *(diisi Minggu 13)* |
+| US-09 | KF-10 | UC-07 | *(diisi Minggu 13)* |
+| US-10 | KNF-02 | UC-01, UC-02, UC-04 | *(diisi Minggu 13)* |
+| US-11 | KF-11, KNF-04 | *(Could — opsional)* | *(diisi Minggu 13)* |
+| US-12 | KNF-01 | UC-01 s.d. UC-07 | *(diisi Minggu 13)* |
+| *(Asumsi / Backlog)* | KF-12, KNF-03, KNF-05 | *(Could / Non-fungsional)* | *(diisi Minggu 13)* |
+
+## 7. Pemodelan UML
+Seluruh berkas pemodelan fungsi dan alur sistem tersimpan pada folder `docs/uml/`:
+- **Use Case Diagram:** [`docs/uml/use-case.mmd`](uml/use-case.mmd) dan [`docs/uml/use-case.png`](uml/use-case.png)
+- **Skenario Use Case (5 skenario):** [`docs/uml/skenario-use-case.md`](uml/skenario-use-case.md)
+- **Activity Diagram 1 (Catat Transaksi):** [`docs/uml/activity-01-catat-transaksi.mmd`](uml/activity-01-catat-transaksi.mmd) dan [`docs/uml/activity-01-catat-transaksi.png`](uml/activity-01-catat-transaksi.png)
+- **Activity Diagram 2 (Ubah Transaksi):** [`docs/uml/activity-02-ubah-transaksi.mmd`](uml/activity-02-ubah-transaksi.mmd) dan [`docs/uml/activity-02-ubah-transaksi.png`](uml/activity-02-ubah-transaksi.png)
+- **Activity Diagram 3 (Hapus Transaksi):** [`docs/uml/activity-03-hapus-transaksi.mmd`](uml/activity-03-hapus-transaksi.mmd) dan [`docs/uml/activity-03-hapus-transaksi.png`](uml/activity-03-hapus-transaksi.png)
+
 
 ## Riwayat Konfirmasi Klien
 | Tanggal | Tanggapan | Perubahan |

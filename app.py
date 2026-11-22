@@ -3,28 +3,116 @@ import io
 import os
 import sqlite3
 from datetime import date
+from functools import wraps
 
-from flask import Flask, Response, abort, flash, redirect, render_template, request, url_for
+from flask import (
+    Flask,
+    Response,
+    abort,
+    flash,
+    g,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 
 import models
 import services
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-only-ganti-di-produksi")
+app.config.update(SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax")
 models.init_db()
 
 
+@app.before_request
+def muat_pengguna():
+    """Isi g.pengguna dari sesi; None bila belum masuk."""
+    pengguna_id = session.get("pengguna_id")
+    g.pengguna = models.ambil_pengguna(pengguna_id) if pengguna_id else None
+
+
+def peran_diperlukan(*peran):
+    """Batasi rute: belum masuk -> /login; peran tidak cocok -> 403."""
+    def dekorator(fungsi):
+        @wraps(fungsi)
+        def bungkus(*args, **kwargs):
+            if g.pengguna is None:
+                return redirect(url_for("login", next=request.full_path.rstrip("?")))
+            if g.pengguna["peran"] not in peran:
+                abort(403)
+            return fungsi(*args, **kwargs)
+        return bungkus
+    return dekorator
+
+
+semua_peran = peran_diperlukan(*services.PERAN)
+hanya_pemilik = peran_diperlukan("pemilik")
+
+
+def _tujuan_aman(tujuan):
+    """Terima hanya alamat dalam situs ini (cegah open redirect)."""
+    if tujuan and tujuan.startswith("/") and not tujuan.startswith("//") and "\\" not in tujuan:
+        return tujuan
+    return None
+
+
+def _form_kategori(judul, kategori, galat):
+    return render_template("kategori_form.html", judul=judul, kategori=kategori, galat=galat)
+
+
+def _form_transaksi(judul, transaksi, galat):
+    return render_template(
+        "transaksi_form.html",
+        judul=judul,
+        transaksi=transaksi,
+        kategori=models.semua_kategori(),
+        galat=galat,
+        default_tanggal=date.today().isoformat(),
+    )
+
+
+@app.errorhandler(403)
+def dilarang(_galat):
+    return render_template("403.html"), 403
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    galat = []
+    if request.method == "POST":
+        pengguna = services.autentikasi(request.form.get("username"), request.form.get("password"))
+        if pengguna:
+            session.clear()
+            session["pengguna_id"] = pengguna["id"]
+            return redirect(_tujuan_aman(request.args.get("next")) or url_for("daftar_transaksi"))
+        galat.append("Nama pengguna atau kata sandi salah.")
+    return render_template("login.html", galat=galat, username=request.form.get("username", ""))
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    session.clear()
+    flash("Anda telah keluar.")
+    return redirect(url_for("login"))
+
+
 @app.route("/")
+@semua_peran
 def beranda():
-    return redirect(url_for("daftar_kategori"))
+    return redirect(url_for("daftar_transaksi"))
 
 
 @app.route("/kategori")
+@hanya_pemilik
 def daftar_kategori():
     return render_template("kategori_list.html", kategori=models.semua_kategori())
 
 
 @app.route("/kategori/tambah", methods=["GET", "POST"])
+@hanya_pemilik
 def tambah_kategori():
     if request.method == "POST":
         data, galat = services.validasi_kategori(request.form)
@@ -36,15 +124,12 @@ def tambah_kategori():
             else:
                 flash("Kategori berhasil ditambahkan.")
                 return redirect(url_for("daftar_kategori"))
-        return render_template(
-            "kategori_form.html", judul="Tambah Kategori", kategori=request.form, galat=galat
-        )
-    return render_template(
-        "kategori_form.html", judul="Tambah Kategori", kategori={}, galat=[]
-    )
+        return _form_kategori("Tambah Kategori", request.form, galat)
+    return _form_kategori("Tambah Kategori", {}, [])
 
 
 @app.route("/kategori/<int:kategori_id>/ubah", methods=["GET", "POST"])
+@hanya_pemilik
 def ubah_kategori(kategori_id):
     kategori = models.ambil_kategori(kategori_id)
     if kategori is None:
@@ -61,15 +146,12 @@ def ubah_kategori(kategori_id):
             else:
                 flash("Kategori berhasil diubah.")
                 return redirect(url_for("daftar_kategori"))
-        return render_template(
-            "kategori_form.html", judul="Ubah Kategori", kategori=request.form, galat=galat
-        )
-    return render_template(
-        "kategori_form.html", judul="Ubah Kategori", kategori=dict(kategori), galat=[]
-    )
+        return _form_kategori("Ubah Kategori", request.form, galat)
+    return _form_kategori("Ubah Kategori", dict(kategori), [])
 
 
 @app.route("/kategori/<int:kategori_id>/hapus", methods=["POST"])
+@hanya_pemilik
 def hapus_kategori(kategori_id):
     if models.ambil_kategori(kategori_id) is None:
         abort(404)
@@ -83,6 +165,7 @@ def hapus_kategori(kategori_id):
 
 
 @app.route("/transaksi")
+@semua_peran
 def daftar_transaksi():
     kata = request.args.get("q", "").strip()
     jenis = request.args.get("jenis", "").strip()
@@ -99,9 +182,8 @@ def daftar_transaksi():
 
 
 @app.route("/transaksi/tambah", methods=["GET", "POST"])
+@semua_peran
 def tambah_transaksi():
-    kategori = models.semua_kategori()
-    hari_ini = date.today().isoformat()
     if request.method == "POST":
         data, galat = services.validasi_transaksi(request.form)
         if not galat and models.ambil_kategori(data["kategori_id"]) is None:
@@ -114,37 +196,23 @@ def tambah_transaksi():
                     data["keterangan"],
                     data["nominal"],
                     data["kategori_id"],
+                    g.pengguna["id"],
                 )
             except sqlite3.IntegrityError:
                 galat.append("Kategori atau pengguna tidak valid.")
             else:
                 flash("Transaksi berhasil disimpan.")
                 return redirect(url_for("daftar_transaksi"))
-        return render_template(
-            "transaksi_form.html",
-            judul="Catat Transaksi",
-            transaksi=request.form,
-            kategori=kategori,
-            galat=galat,
-            default_tanggal=hari_ini,
-        )
-    return render_template(
-        "transaksi_form.html",
-        judul="Catat Transaksi",
-        transaksi={},
-        kategori=kategori,
-        galat=[],
-        default_tanggal=hari_ini,
-    )
+        return _form_transaksi("Catat Transaksi", request.form, galat)
+    return _form_transaksi("Catat Transaksi", {}, [])
 
 
 @app.route("/transaksi/<int:transaksi_id>/ubah", methods=["GET", "POST"])
+@semua_peran
 def ubah_transaksi(transaksi_id):
     trx = models.ambil_transaksi(transaksi_id)
     if trx is None:
         abort(404)
-    kategori = models.semua_kategori()
-    hari_ini = date.today().isoformat()
     if request.method == "POST":
         data, galat = services.validasi_transaksi(request.form)
         if not galat and models.ambil_kategori(data["kategori_id"]) is None:
@@ -164,25 +232,12 @@ def ubah_transaksi(transaksi_id):
             else:
                 flash("Transaksi berhasil diubah.")
                 return redirect(url_for("daftar_transaksi"))
-        return render_template(
-            "transaksi_form.html",
-            judul="Ubah Transaksi",
-            transaksi=request.form,
-            kategori=kategori,
-            galat=galat,
-            default_tanggal=hari_ini,
-        )
-    return render_template(
-        "transaksi_form.html",
-        judul="Ubah Transaksi",
-        transaksi=dict(trx),
-        kategori=kategori,
-        galat=[],
-        default_tanggal=hari_ini,
-    )
+        return _form_transaksi("Ubah Transaksi", request.form, galat)
+    return _form_transaksi("Ubah Transaksi", dict(trx), [])
 
 
 @app.route("/transaksi/<int:transaksi_id>/hapus", methods=["POST"])
+@hanya_pemilik
 def hapus_transaksi(transaksi_id):
     if models.ambil_transaksi(transaksi_id) is None:
         abort(404)
@@ -190,21 +245,9 @@ def hapus_transaksi(transaksi_id):
     flash("Transaksi berhasil dihapus.")
     return redirect(url_for("daftar_transaksi"))
 
-def _form_kategori(judul, kategori, galat):
-    return render_template("kategori_form.html", judul=judul, kategori=kategori, galat=galat)
-
-
-def _form_transaksi(judul, transaksi, galat):
-    return render_template(
-        "transaksi_form.html",
-        judul=judul,
-        transaksi=transaksi,
-        kategori=models.semua_kategori(),
-        galat=galat,
-        default_tanggal=date.today().isoformat(),
-    )
 
 @app.route("/ekspor")
+@hanya_pemilik
 def ekspor_csv():
     bulan = request.args.get("bulan", "").strip()
     data = models.cari_transaksi(bulan=bulan)
@@ -223,6 +266,7 @@ def ekspor_csv():
         mimetype="text/csv",
         headers={"Content-Disposition": f"attachment; filename=rekap-keuangan-{bulan or 'semua'}.csv"},
     )
+
 
 if __name__ == "__main__":
     app.run(debug=True)

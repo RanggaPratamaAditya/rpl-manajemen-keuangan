@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block judul %}Masuk — Sistem Manajemen Keuangan UMKM{% endblock %}
+{% block isi %}
+<h1>Sistem Manajemen Keuangan UMKM — Masuk</h1>
+{% for g_ in galat %}
+  <p class="galat" role="alert">{{ g_ }}</p>
+{% endfor %}
+<form method="post">
+  <label>Nama pengguna
+    <input name="username" value="{{ username }}" required maxlength="30" autocomplete="username" autofocus>
+  </label>
+  <label>Kata sandi
+    <input type="password" name="password" required autocomplete="current-password">
+  </label>
+  <button type="submit">Masuk</button>
+</form>
+{% endblock %}

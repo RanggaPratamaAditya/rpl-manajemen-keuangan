@@ -20,6 +20,7 @@
     <a href="{{ url_for('beranda') }}">Beranda</a>
     <a href="{{ url_for('daftar_kategori') }}">Kategori</a>
     <a href="{{ url_for('daftar_transaksi') }}">Transaksi</a>
+    <a href="{{ url_for('ekspor_csv') }}">Ekspor CSV</a>
   </nav>
   {% for pesan in get_flashed_messages() %}
     <p class="pesan">{{ pesan }}</p>

@@ -1,8 +1,10 @@
+import csv
+import io
 import os
 import sqlite3
 from datetime import date
 
-from flask import Flask, abort, flash, redirect, render_template, request, url_for
+from flask import Flask, Response, abort, flash, redirect, render_template, request, url_for
 
 import models
 import services
@@ -200,6 +202,26 @@ def _form_transaksi(judul, transaksi, galat):
         kategori=models.semua_kategori(),
         galat=galat,
         default_tanggal=date.today().isoformat(),
+    )
+
+@app.route("/ekspor")
+def ekspor_csv():
+    bulan = request.args.get("bulan", "").strip()
+    data = models.cari_transaksi(bulan=bulan)
+    if not data:
+        flash("Tidak ada data untuk diekspor.")
+        return redirect(url_for("daftar_transaksi"))
+
+    buffer = io.StringIO()
+    penulis = csv.writer(buffer)
+    penulis.writerow(["Tanggal", "Jenis", "Kategori", "Keterangan", "Nominal"])
+    for t in data:
+        penulis.writerow([t["tanggal"], t["jenis"], t["nama_kategori"], t["keterangan"], t["nominal"]])
+
+    return Response(
+        buffer.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=rekap-keuangan-{bulan or 'semua'}.csv"},
     )
 
 if __name__ == "__main__":

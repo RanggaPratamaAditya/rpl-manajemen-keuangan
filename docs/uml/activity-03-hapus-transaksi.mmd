@@ -1,0 +1,12 @@
+flowchart TD
+    A((Mulai)) --> B["Pengguna menekan tombol Hapus pada baris transaksi"]
+    B --> C["Sistem menampilkan pesan konfirmasi penghapusan"]
+    C --> D{"Pengguna menyetujui penghapusan?"}
+    D -->|Tidak| E["Sistem membatalkan penghapusan dan mempertahankan data"]
+    E --> J((Selesai))
+    D -->|Ya| F{"ID transaksi ditemukan di penyimpanan lokal?"}
+    F -->|Tidak| G["Sistem menampilkan pesan Transaksi tidak ditemukan"]
+    G --> J
+    F -->|Ya| H["Sistem menghapus transaksi dan menghitung ulang saldo akhir"]
+    H --> I["Sistem menampilkan daftar riwayat terbaru"]
+    I --> J

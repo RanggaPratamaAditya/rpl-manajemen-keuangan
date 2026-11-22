@@ -1,0 +1,14 @@
+flowchart TD
+    A((Mulai)) --> B["Pengguna membuka formulir pencatatan transaksi"]
+    B --> C["Pengguna mengisi jenis, kategori, keterangan, dan nominal"]
+    C --> D["Pengguna menekan tombol Simpan"]
+    D --> E{"Keterangan & kategori terisi serta nominal > 0?"}
+    E -->|Tidak| F["Sistem menolak dan menampilkan pesan peringatan validasi"]
+    F --> C
+    E -->|Ya| G{"Jenis transaksi pemasukan?"}
+    G -->|Ya| H["Sistem menambah saldo akhir"]
+    G -->|Tidak| I["Sistem mengurangi saldo akhir"]
+    H --> J["Sistem menyimpan transaksi ke penyimpanan lokal"]
+    I --> J
+    J --> K["Sistem menampilkan daftar riwayat terbaru"]
+    K --> L((Selesai))

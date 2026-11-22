@@ -96,4 +96,10 @@ ada("tidak dapat dihapus", kirim("/kategori/1/hapus"))  # Penjualan sudah dipaka
 assert c.get("/kategori/1/hapus").status_code == 405
 ada("berhasil dihapus", kirim("/kategori/3/hapus"))     # Lainnya belum dipakai
 
+# --- 6. Uji Ekspor CSV (KF-10) ---
+res_csv = c.get("/ekspor")
+assert res_csv.status_code == 200
+assert "text/csv" in res_csv.content_type
+assert "Tanggal,Jenis,Kategori,Keterangan,Nominal" in res_csv.text
+
 print("SEMUA UJI LULUS")

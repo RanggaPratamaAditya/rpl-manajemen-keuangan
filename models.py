@@ -56,3 +56,68 @@ def ubah_kategori(kategori_id, nama_kategori, jenis_default):
 def hapus_kategori(kategori_id):
     with koneksi() as db:
         db.execute("DELETE FROM kategori WHERE id = ?", (kategori_id,))
+
+def semua_transaksi():
+    with koneksi() as db:
+        return db.execute(
+            """
+            SELECT t.id, t.tanggal, t.jenis, t.keterangan, t.nominal,
+                   t.kategori_id, k.nama_kategori
+            FROM transaksi t
+            JOIN kategori k ON k.id = t.kategori_id
+            ORDER BY t.tanggal DESC, t.id DESC
+            """
+        ).fetchall()
+
+
+def ambil_transaksi(transaksi_id):
+    with koneksi() as db:
+        return db.execute(
+            "SELECT * FROM transaksi WHERE id = ?",
+            (transaksi_id,),
+        ).fetchone()
+
+
+def ringkasan_saldo():
+    with koneksi() as db:
+        row = db.execute(
+            """
+            SELECT
+            COALESCE(SUM(CASE WHEN jenis = 'pemasukan' THEN nominal ELSE 0 END), 0) AS total_masuk,
+            COALESCE(SUM(CASE WHEN jenis = 'pengeluaran' THEN nominal ELSE 0 END), 0) AS total_keluar
+            FROM transaksi
+            """
+        ).fetchone()
+        return {
+            "total_masuk": row["total_masuk"],
+            "total_keluar": row["total_keluar"],
+            "saldo": row["total_masuk"] - row["total_keluar"],
+        }
+
+
+def tambah_transaksi(tanggal, jenis, keterangan, nominal, kategori_id, pengguna_id=1):
+    with koneksi() as db:
+        db.execute(
+            """
+            INSERT INTO transaksi (tanggal, jenis, keterangan, nominal, kategori_id, pengguna_id)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (tanggal, jenis, keterangan, nominal, kategori_id, pengguna_id),
+        )
+
+
+def ubah_transaksi(transaksi_id, tanggal, jenis, keterangan, nominal, kategori_id):
+    with koneksi() as db:
+        db.execute(
+            """
+            UPDATE transaksi
+            SET tanggal = ?, jenis = ?, keterangan = ?, nominal = ?, kategori_id = ?
+            WHERE id = ?
+            """,
+            (tanggal, jenis, keterangan, nominal, kategori_id, transaksi_id),
+        )
+
+
+def hapus_transaksi(transaksi_id):
+    with koneksi() as db:
+        db.execute("DELETE FROM transaksi WHERE id = ?", (transaksi_id,))

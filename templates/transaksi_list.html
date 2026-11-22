@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block judul %}Daftar Transaksi{% endblock %}
+{% block isi %}
+<h1>Riwayat Transaksi &amp; Ringkasan Saldo</h1>
+<p>
+  <strong>Total Pemasukan:</strong> Rp {{ "{:,}".format(ringkasan.total_masuk).replace(",", ".") }} |
+  <strong>Total Pengeluaran:</strong> Rp {{ "{:,}".format(ringkasan.total_keluar).replace(",", ".") }} |
+  <strong>Saldo Akhir:</strong> Rp {{ "{:,}".format(ringkasan.saldo).replace(",", ".") }}
+</p>
+<p><a href="{{ url_for('tambah_transaksi') }}">+ Catat Transaksi</a></p>
+<table>
+  <thead>
+    <tr>
+      <th>Tanggal</th><th>Jenis</th><th>Kategori</th><th>Keterangan</th><th>Nominal</th><th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in transaksi %}
+    <tr>
+      <td>{{ t['tanggal'] }}</td>
+      <td>{{ t['jenis'] }}</td>
+      <td>{{ t['nama_kategori'] }}</td>
+      <td>{{ t['keterangan'] }}</td>
+      <td>Rp {{ "{:,}".format(t['nominal']).replace(",", ".") }}</td>
+      <td>
+        <a href="{{ url_for('ubah_transaksi', transaksi_id=t['id']) }}">Ubah</a>
+        <form method="post" action="{{ url_for('hapus_transaksi', transaksi_id=t['id']) }}" style="display:inline"
+              onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">
+          <button type="submit">Hapus</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">Belum ada data transaksi.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

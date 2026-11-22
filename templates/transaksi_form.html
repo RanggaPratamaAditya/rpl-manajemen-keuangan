@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block judul %}{{ judul }}{% endblock %}
+{% block isi %}
+<h1>{{ judul }}</h1>
+{% for g in galat %}<p class="galat">{{ g }}</p>{% endfor %}
+<form method="post">
+  <p><label>Tanggal (YYYY-MM-DD)<br>
+    <input type="date" name="tanggal" value="{{ transaksi.get('tanggal', default_tanggal) }}">
+  </label></p>
+  <p><label>Jenis Transaksi<br>
+    <select name="jenis">
+      <option value="">-- Pilih Jenis --</option>
+      <option value="pemasukan" {% if transaksi.get('jenis') == 'pemasukan' %}selected{% endif %}>pemasukan</option>
+      <option value="pengeluaran" {% if transaksi.get('jenis') == 'pengeluaran' %}selected{% endif %}>pengeluaran</option>
+    </select>
+  </label></p>
+  <p><label>Kategori<br>
+    <select name="kategori_id">
+      <option value="">-- Pilih Kategori --</option>
+      {% for k in kategori %}
+      <option value="{{ k['id'] }}" {% if transaksi.get('kategori_id')|string == k['id']|string %}selected{% endif %}>
+        {{ k['nama_kategori'] }}
+      </option>
+      {% endfor %}
+    </select>
+  </label></p>
+  <p><label>Keterangan (maks. 50 karakter)<br>
+    <input type="text" name="keterangan" maxlength="50" value="{{ transaksi.get('keterangan', '') }}" style="width:360px;">
+  </label></p>
+  <p><label>Nominal (Rp, angka bulat &gt; 0)<br>
+    <input type="text" name="nominal" value="{{ transaksi.get('nominal', '') }}">
+  </label></p>
+  <p>
+    <a href="{{ url_for('daftar_transaksi') }}">Batal</a>
+    <button type="submit">Simpan</button>
+  </p>
+</form>
+{% endblock %}

@@ -25,14 +25,17 @@ def validasi_kategori(form):
 def validasi_transaksi(form):
     """Validasi masukan transaksi sesuai KF-02 dan kamus-data.md."""
     galat = []
-    tanggal = (form.get("tanggal") or "").strip() or date.today().isoformat()
+    tanggal = (form.get("tanggal") or "").strip()
     jenis = (form.get("jenis") or "").strip()
     keterangan = (form.get("keterangan") or "").strip()
     nominal_teks = (form.get("nominal") or "").strip()
     kategori_teks = (form.get("kategori_id") or "").strip()
 
-    if len(tanggal) != 10:
-        galat.append("Tanggal harus berformat YYYY-MM-DD.")
+    try:
+        date.fromisoformat(tanggal)
+    except ValueError:
+        galat.append("Tanggal harus berformat TTTT-BB-HH.")
+
     if jenis not in JENIS_TRANSAKSI_VALID:
         galat.append("Jenis transaksi harus pemasukan atau pengeluaran.")
     if not keterangan:
@@ -42,11 +45,11 @@ def validasi_transaksi(form):
 
     nominal = int(nominal_teks) if nominal_teks.isdigit() else None
     if nominal is None or nominal <= 0:
-        galat.append("Nominal harus berupa angka bulat positif (> 0).")
+        galat.append("Nominal harus berupa angka lebih dari 0.")
 
     kategori_id = int(kategori_teks) if kategori_teks.isdigit() else None
     if kategori_id is None:
-        galat.append("Kategori wajib dipilih.")
+        galat.append("Pilih kategori terlebih dahulu.")
 
     data = {
         "tanggal": tanggal,

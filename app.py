@@ -34,8 +34,13 @@ def tambah_kategori():
             else:
                 flash("Kategori berhasil ditambahkan.")
                 return redirect(url_for("daftar_kategori"))
-        return render_template("kategori_form.html", judul="Tambah Kategori", kategori=request.form, galat=galat)
-    return render_template("kategori_form.html", judul="Tambah Kategori", kategori={}, galat=[])
+        return render_template(
+            "kategori_form.html", judul="Tambah Kategori", kategori=request.form, galat=galat
+        )
+    return render_template(
+        "kategori_form.html", judul="Tambah Kategori", kategori={}, galat=[]
+    )
+
 
 @app.route("/kategori/<int:kategori_id>/ubah", methods=["GET", "POST"])
 def ubah_kategori(kategori_id):
@@ -46,14 +51,21 @@ def ubah_kategori(kategori_id):
         data, galat = services.validasi_kategori(request.form)
         if not galat:
             try:
-                models.ubah_kategori(kategori_id, data["nama_kategori"], data["jenis_default"])
+                models.ubah_kategori(
+                    kategori_id, data["nama_kategori"], data["jenis_default"]
+                )
             except sqlite3.IntegrityError:
                 galat.append("Nama kategori sudah terdaftar.")
             else:
                 flash("Kategori berhasil diubah.")
                 return redirect(url_for("daftar_kategori"))
-        return render_template("kategori_form.html", judul="Ubah Kategori", kategori=request.form, galat=galat)
-    return render_template("kategori_form.html", judul="Ubah Kategori", kategori=dict(kategori), galat=[])
+        return render_template(
+            "kategori_form.html", judul="Ubah Kategori", kategori=request.form, galat=galat
+        )
+    return render_template(
+        "kategori_form.html", judul="Ubah Kategori", kategori=dict(kategori), galat=[]
+    )
+
 
 @app.route("/kategori/<int:kategori_id>/hapus", methods=["POST"])
 def hapus_kategori(kategori_id):
@@ -66,6 +78,7 @@ def hapus_kategori(kategori_id):
     else:
         flash("Kategori berhasil dihapus.")
     return redirect(url_for("daftar_kategori"))
+
 
 @app.route("/transaksi")
 def daftar_transaksi():
@@ -82,10 +95,16 @@ def tambah_transaksi():
     hari_ini = date.today().isoformat()
     if request.method == "POST":
         data, galat = services.validasi_transaksi(request.form)
+        if not galat and models.ambil_kategori(data["kategori_id"]) is None:
+            galat.append("Kategori tidak ditemukan.")
         if not galat:
             try:
                 models.tambah_transaksi(
-                    data["tanggal"], data["jenis"], data["keterangan"], data["nominal"], data["kategori_id"]
+                    data["tanggal"],
+                    data["jenis"],
+                    data["keterangan"],
+                    data["nominal"],
+                    data["kategori_id"],
                 )
             except sqlite3.IntegrityError:
                 galat.append("Kategori atau pengguna tidak valid.")
@@ -93,12 +112,20 @@ def tambah_transaksi():
                 flash("Transaksi berhasil disimpan.")
                 return redirect(url_for("daftar_transaksi"))
         return render_template(
-            "transaksi_form.html", judul="Catat Transaksi", transaksi=request.form,
-            kategori=kategori, galat=galat, default_tanggal=hari_ini,
+            "transaksi_form.html",
+            judul="Catat Transaksi",
+            transaksi=request.form,
+            kategori=kategori,
+            galat=galat,
+            default_tanggal=hari_ini,
         )
     return render_template(
-        "transaksi_form.html", judul="Catat Transaksi", transaksi={},
-        kategori=kategori, galat=[], default_tanggal=hari_ini,
+        "transaksi_form.html",
+        judul="Catat Transaksi",
+        transaksi={},
+        kategori=kategori,
+        galat=[],
+        default_tanggal=hari_ini,
     )
 
 
@@ -111,10 +138,17 @@ def ubah_transaksi(transaksi_id):
     hari_ini = date.today().isoformat()
     if request.method == "POST":
         data, galat = services.validasi_transaksi(request.form)
+        if not galat and models.ambil_kategori(data["kategori_id"]) is None:
+            galat.append("Kategori tidak ditemukan.")
         if not galat:
             try:
                 models.ubah_transaksi(
-                    transaksi_id, data["tanggal"], data["jenis"], data["keterangan"], data["nominal"], data["kategori_id"]
+                    transaksi_id,
+                    data["tanggal"],
+                    data["jenis"],
+                    data["keterangan"],
+                    data["nominal"],
+                    data["kategori_id"],
                 )
             except sqlite3.IntegrityError:
                 galat.append("Kategori tidak valid.")
@@ -122,12 +156,20 @@ def ubah_transaksi(transaksi_id):
                 flash("Transaksi berhasil diubah.")
                 return redirect(url_for("daftar_transaksi"))
         return render_template(
-            "transaksi_form.html", judul="Ubah Transaksi", transaksi=request.form,
-            kategori=kategori, galat=galat, default_tanggal=hari_ini,
+            "transaksi_form.html",
+            judul="Ubah Transaksi",
+            transaksi=request.form,
+            kategori=kategori,
+            galat=galat,
+            default_tanggal=hari_ini,
         )
     return render_template(
-        "transaksi_form.html", judul="Ubah Transaksi", transaksi=dict(trx),
-        kategori=kategori, galat=[], default_tanggal=hari_ini,
+        "transaksi_form.html",
+        judul="Ubah Transaksi",
+        transaksi=dict(trx),
+        kategori=kategori,
+        galat=[],
+        default_tanggal=hari_ini,
     )
 
 
@@ -138,6 +180,7 @@ def hapus_transaksi(transaksi_id):
     models.hapus_transaksi(transaksi_id)
     flash("Transaksi berhasil dihapus.")
     return redirect(url_for("daftar_transaksi"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -8,9 +8,19 @@ import models
 JENIS_KATEGORI_VALID = ("pemasukan", "pengeluaran", "umum")
 JENIS_TRANSAKSI_VALID = ("pemasukan", "pengeluaran")
 PERAN = ("pemilik", "kasir")
+BATAS_NOMINAL = 1_000_000_000
 
 # Hash palsu agar waktu respons sama saat username tidak ditemukan
 _HASH_PALSU = generate_password_hash("bukan-kata-sandi-sungguhan")
+
+
+def _bilangan_positif(teks):
+    """Ubah teks menjadi bilangan bulat 1..BATAS_NOMINAL, atau None bila tidak valid."""
+    teks = (teks or "").strip()
+    if not (teks.isascii() and teks.isdigit()) or len(teks) > 10:
+        return None
+    angka = int(teks)
+    return angka if 1 <= angka <= BATAS_NOMINAL else None
 
 
 def validasi_kategori(form):
@@ -41,6 +51,8 @@ def validasi_transaksi(form):
     kategori_teks = (form.get("kategori_id") or "").strip()
 
     try:
+        if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", tanggal):
+            raise ValueError("Format tanggal wajib TTTT-BB-HH.")
         date.fromisoformat(tanggal)
     except ValueError:
         galat.append("Tanggal harus berformat TTTT-BB-HH.")
@@ -52,11 +64,11 @@ def validasi_transaksi(form):
     elif len(keterangan) > 50:
         galat.append("Keterangan maksimal 50 karakter.")
 
-    nominal = int(nominal_teks) if nominal_teks.isdigit() else None
-    if nominal is None or nominal <= 0:
-        galat.append("Nominal harus berupa angka lebih dari 0.")
+    nominal = _bilangan_positif(nominal_teks)
+    if nominal is None:
+        galat.append("Nominal harus berupa angka lebih dari 0 (maksimal 1.000.000.000).")
 
-    kategori_id = int(kategori_teks) if kategori_teks.isdigit() else None
+    kategori_id = _bilangan_positif(kategori_teks)
     if kategori_id is None:
         galat.append("Pilih kategori terlebih dahulu.")
 

@@ -20,3 +20,7 @@
 1. **Pengujian Menyeluruh (Minggu 13):** Melengkapi >= 20 test case (>= 8 uji otomatis `pytest` / `tests/uji_cepat.py`).
 2. **UAT Bersama Klien (Minggu 13–14):** Pengujian skenario pencatatan harian bersama klien UMKM dengan data fiktif dan mencatat berita acara UAT.
 3. **Tindak Lanjut Temuan Tertunda & Rilis `v1.0` (Minggu 14):** Memisahkan skrip konfirmasi hapus dari atribut `onsubmit` (temuan `P-05`), melengkapi `README.md` + manual pengguna, dan membuat tag rilis `v1.0`.
+
+## Status Persiapan UAT & Rilis v1.0 (Akhir Minggu 13)
+- **Keterlacakan pengujian:** 7 KF (`KF-01` s.d. `KF-07`) telah tercakup oleh 24 test case dan 34 eksekusi uji otomatis `pytest` (KF tanpa uji = 0).
+- **Jadwal UAT (Minggu 14):** Rencana UAT (`docs/pengujian/rencana-uat.md`) dan data uji karangan siap dikonfirmasi dengan klien untuk pelaksanaan pada Pertemuan 14 bersama dokumentasi akhir dan tag rilis `v1.0`.

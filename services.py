@@ -15,7 +15,7 @@ _HASH_PALSU = generate_password_hash("bukan-kata-sandi-sungguhan")
 
 
 def _bilangan_positif(teks):
-    """Ubah teks menjadi bilangan bulat ASCII 1..BATAS_NOMINAL, atau None bila tidak valid."""
+    """Ubah teks menjadi bilangan bulat 1..BATAS_NOMINAL, atau None bila tidak valid."""
     teks = (teks or "").strip()
     if not (teks.isascii() and teks.isdigit()) or len(teks) > 10:
         return None

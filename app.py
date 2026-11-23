@@ -4,6 +4,7 @@ import logging
 import os
 import secrets
 import sqlite3
+from versi import VERSI
 from datetime import date
 from functools import wraps
 
@@ -38,8 +39,11 @@ if not app.secret_key:
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=PRODUKSI,
+    # Hanya lewat HTTPS. Bila jaringan lokal tertutup memakai HTTP: COOKIE_SECURE=0
+    SESSION_COOKIE_SECURE=os.environ.get("COOKIE_SECURE", "1" if PRODUKSI else "0") == "1",
 )
+app.jinja_env.globals["versi"] = VERSI
+
 models.init_db()
 
 

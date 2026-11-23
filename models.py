@@ -1,8 +1,9 @@
 import sqlite3
+import os
 from contextlib import contextmanager
 from pathlib import Path
 
-DB_PATH = Path(__file__).with_name("keuangan.db")
+DB_PATH = Path(os.environ.get("KEUANGAN_DB") or Path(__file__).with_name("keuangan.db"))
 SCHEMA = Path(__file__).parent / "docs" / "desain" / "schema.sql"
 
 

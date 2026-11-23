@@ -223,3 +223,9 @@ __marimo__/
 .streamlit/secrets.toml
 
 *.db
+
+# Rahasia dan data proyek
+.env
+*.db
+keuangan.db
+cadangan/

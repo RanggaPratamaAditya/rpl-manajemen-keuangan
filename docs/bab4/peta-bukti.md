@@ -1,0 +1,10 @@
+# Peta Bukti Bab 4 — Sistem Manajemen Keuangan UMKM (`rpl-manajemen-keuangan`)
+
+| Sub | Berkas Sumber di Repositori | Bukti yang Ditampilkan | Pemilik | Status |
+|---|---|---|---|---|
+| 4.1 | `requirements.txt`, `README.md`, `versi.py`, `jurnal/rangga.md` | Tabel versi perangkat lunak (Python 3.15, Flask, Waitress, pytest), konfigurasi `.env`, dan pernyataan peran asisten AI | Rangga Pratama Aditya | Siap ditulis |
+| 4.2 | `app.py`, `services.py`, `models.py`, `docs/gambar/*.png`, `jurnal/rangga.md` | Diagram/struktur arsitektur 3 lapis, 5 tangkapan layar antarmuka (`01`–`05`), cuplikan kode $\le 15$ baris (dekorator peran, validasi transaksi, transaksi SQL), dan 3 siklus prompt representatif | Rangga Pratama Aditya | Siap ditulis |
+| 4.3 | `docs/laporan-temuan.md`, `percobaan.py`, `app.py`, riwayat PR GitHub | Tabel temuan code review & kerentanan beserta kategori OWASP Top 10:2025, hash commit perbaikan, dan contoh kode sebelum–sesudah | Rangga Pratama Aditya | Siap ditulis |
+| 4.4 | `docs/pengujian/test-case.md`, `docs/pengujian/laporan-cacat.md`, `tests/`, `docs/uat/hasil-uat.md`, `docs/uat/hitung_sus.py` | Tabel ringkasan 24 test case, keluaran `pytest` (`45 passed`) & `uji_cepat.py`, tabel perbaikan 3 cacat (`D-01`–`D-03`), serta hasil UAT (6 skenario, skor SUS rata-rata `86.3`, tabel triase) | Rangga Pratama Aditya | Siap ditulis |
+| 4.5 | Tag `v1.0.0`, `CHANGELOG.md`, `README.md`, `docs/manual-pengguna.md`, `cadangkan.py` | Bukti tag `v1.0.0` (commit `a410186`), konfigurasi server produksi Waitress, prosedur cadangan/pemulihan basis data, dan hasil *uji orang asing* | Rangga Pratama Aditya | Siap ditulis |
+| 4.6 | `PRD.md`, `jurnal/rangga.md`, keluaran `alat/analisis_jurnal.py` | Tabel pemenuhan kebutuhan (`KF-01`–`KF-07`), tabel rekap & dampak waktu Jurnal Vibe Coding beserta $\ge 3$ paragraf analitis, serta $\ge 3$ keterbatasan dan rekomendasi `v1.1.0` | Rangga Pratama Aditya | Siap ditulis |
